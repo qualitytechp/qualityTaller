@@ -1,0 +1,89 @@
+@if (datos.cargando()) {
+  <qt-cargando />
+} @else {
+  <div class="page">
+    <div class="card-dark">
+      <div class="eyebrow">Le debo a proveedores</div>
+      <div class="display total">{{ plata(debo()) }}</div>
+    </div>
+
+    <div class="row-between titulo">
+      <div class="section-title">Proveedores</div>
+      <button type="button" class="nuevo" (click)="nuevo.set({ nombre: '', celular: '' })">+ Proveedor</button>
+    </div>
+    <div class="stack">
+      @for (p of proveedores(); track p.id) {
+        <div class="card-sm prov">
+          <div class="row">
+            <div class="grow">
+              <div class="nombre">{{ p.nombre }}</div>
+              <div class="meta">{{ ultima(p) }}</div>
+            </div>
+            <div class="display debe" [class.al-dia]="p.debe <= 0">{{ p.debe > 0 ? plata(p.debe) : 'Al día' }}</div>
+          </div>
+          <div class="row dos">
+            <button type="button" class="btn btn-outline" (click)="escribir(p)">WhatsApp</button>
+            @if (p.debe > 0) {
+              <button type="button" class="btn btn-dark" (click)="abrirAbono(p)">Abonar</button>
+            }
+          </div>
+        </div>
+      } @empty {
+        <qt-vacio titulo="Sin proveedores" texto="Agrega a quién le compras los repuestos." />
+      }
+    </div>
+
+    <div class="section-title">Últimas compras</div>
+    <div class="stack">
+      @for (k of datos.valor().compras; track k.id) {
+        <div class="card-sm">
+          <div class="row-between">
+            <span class="nombre chico">{{ nombreDe(k.proveedorId) }}</span>
+            <span class="meta">{{ cuando(k.fecha, false) }}</span>
+          </div>
+          @if (k.factura) {
+            <div class="meta">Factura {{ k.factura }}</div>
+          }
+          <div class="items">{{ detalle(k) }}</div>
+          <div class="row-between abajo">
+            <span class="badge" [class.pagada]="k.pagado >= k.total" [class.pendiente]="k.pagado < k.total">
+              {{ k.pagado >= k.total ? 'Pagada' : k.pagado > 0 ? 'Abonada ' + plata(k.pagado) : 'Pendiente de pago' }}
+            </span>
+            <span class="display monto">{{ plata(k.total) }}</span>
+          </div>
+        </div>
+      } @empty {
+        <qt-vacio titulo="Sin compras registradas" texto="Al registrar una compra sube el inventario y se actualiza el costo." />
+      }
+    </div>
+  </div>
+
+  <div class="action-bar">
+    <a class="btn btn-primary btn-lg" routerLink="/compras/nueva">Registrar una compra</a>
+  </div>
+
+  @if (abono(); as a) {
+    <qt-hoja [titulo]="'Abonar a ' + a.proveedor.nombre" (cerrar)="abono.set(null)">
+      <div class="muted">Le debes {{ plata(a.proveedor.debe) }}.</div>
+      <label class="label" for="ab-monto">¿Cuánto le abonas?</label>
+      <qt-campo-plata campoId="ab-monto" [valor]="a.monto" (valorChange)="cambiarAbono({ monto: $event })" />
+      <span class="label">De dónde sale</span>
+      <div class="row">
+        @for (f of fuentes; track f.k) {
+          <button type="button" class="seg" [class.on]="a.fuente === f.k" (click)="cambiarAbono({ fuente: f.k })">{{ f.k === 'Digital' ? 'Billeteras' : f.k }}</button>
+        }
+      </div>
+      <button type="button" class="btn btn-dark btn-lg" (click)="abonar()">Abonar {{ plata(a.monto) }}</button>
+    </qt-hoja>
+  }
+
+  @if (nuevo(); as p) {
+    <qt-hoja titulo="Proveedor nuevo" (cerrar)="nuevo.set(null)">
+      <label class="label" for="p-nombre">Nombre <span class="req">*</span></label>
+      <input id="p-nombre" class="input" [ngModel]="p.nombre" (ngModelChange)="nuevo.set({ nombre: $event, celular: p.celular })" autocomplete="off" />
+      <label class="label" for="p-cel">Celular o WhatsApp <span class="req">*</span></label>
+      <input id="p-cel" class="input" type="tel" inputmode="tel" [ngModel]="p.celular" (ngModelChange)="nuevo.set({ nombre: p.nombre, celular: $event })" autocomplete="off" />
+      <button type="button" class="btn btn-primary btn-lg" (click)="guardarProveedor()">Guardar</button>
+    </qt-hoja>
+  }
+}

@@ -1,0 +1,85 @@
+<div class="buscar">
+  <input
+    class="input input-search"
+    type="search"
+    placeholder="Qué se lleva: cámara, pastillas, guaya…"
+    [ngModel]="busqueda()"
+    (ngModelChange)="busqueda.set($event)"
+    autocomplete="off"
+  />
+</div>
+
+<div class="cuerpo">
+  @if (repuestos.cargando()) {
+    <qt-cargando />
+  } @else {
+    <div class="stack-8">
+      @for (r of catalogo(); track r.id) {
+        <button type="button" class="articulo" (click)="agregar(r)">
+          <div class="grow">
+            <div class="nombre">{{ r.nombre }}</div>
+            <div class="meta" [class.rojo]="disponible(r) <= r.minimo">{{ metaRepuesto(r) }}</div>
+          </div>
+          <div class="display precio">{{ plata(r.precio) }}</div>
+          <div class="mas" aria-hidden="true">+</div>
+        </button>
+      } @empty {
+        <div class="empty">
+          <div class="empty-title">{{ busqueda() ? 'Nada con ese nombre' : 'No hay repuestos con existencias' }}</div>
+          <div class="empty-text">Búscalo por referencia o marca, o véndelo como artículo suelto.</div>
+          <button type="button" class="btn btn-add suelto" (click)="abrirSuelto()">Vender artículo suelto</button>
+        </div>
+      }
+    </div>
+    @if (catalogo().length) {
+      <button type="button" class="link-suelto" (click)="abrirSuelto()">¿No está en la lista? Vender artículo suelto</button>
+    }
+
+    @if (carrito().length) {
+      <div class="section-title">Lo que se lleva</div>
+      <div class="stack-8">
+        @for (i of carrito(); track i.id) {
+          <div class="card-sm linea">
+            <div class="grow">
+              <div class="nombre chico">{{ i.nombre }}</div>
+              <div class="meta">{{ metaLinea(i) }}</div>
+            </div>
+            <button type="button" class="qty-btn" [attr.aria-label]="'Quitar uno de ' + i.nombre" (click)="cambiar(i.id, -1)">−</button>
+            <span class="n">{{ i.cantidad }}</span>
+            <button type="button" class="qty-btn" [attr.aria-label]="'Agregar uno de ' + i.nombre" (click)="cambiar(i.id, 1)">+</button>
+            <div class="display sub">{{ plata(i.precio * i.cantidad) }}</div>
+          </div>
+        }
+      </div>
+      <div class="card como-paga">
+        <span class="label">Cómo paga</span>
+        <div class="medios">
+          @for (m of medios; track m) {
+            <button type="button" class="medio" [class.on]="medio() === m" (click)="medio.set(m)">{{ m }}</button>
+          }
+        </div>
+      </div>
+    }
+  }
+</div>
+
+<div class="action-bar">
+  <div class="row-between resumen">
+    <span class="eyebrow">{{ conteo() }}</span>
+    <span class="display total">{{ plata(total()) }}</span>
+  </div>
+  <button type="button" class="btn btn-primary btn-lg" [class.is-off]="!total() || cobrando()" (click)="cobrar()">
+    {{ total() ? 'Cobrar ' + plata(total()) : 'Toca lo que se lleva' }}
+  </button>
+</div>
+
+@if (suelto(); as s) {
+  <qt-hoja titulo="Artículo suelto" (cerrar)="suelto.set(null)">
+    <div class="muted">Para lo que no está en el inventario. No baja existencias.</div>
+    <label class="label" for="s-nombre">Qué es <span class="req">*</span></label>
+    <input id="s-nombre" class="input" [ngModel]="s.nombre" (ngModelChange)="suelto.set({ nombre: $event, precio: s.precio })" placeholder="Cinta de manubrio" autocomplete="off" />
+    <label class="label" for="s-precio">Precio <span class="req">*</span></label>
+    <qt-campo-plata campoId="s-precio" [valor]="s.precio" (valorChange)="suelto.set({ nombre: s.nombre, precio: $event })" />
+    <button type="button" class="btn btn-dark btn-lg" (click)="agregarSuelto()">Agregar a la venta</button>
+  </qt-hoja>
+}

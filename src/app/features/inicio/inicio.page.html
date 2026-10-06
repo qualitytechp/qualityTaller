@@ -1,0 +1,66 @@
+@if (datos.error(); as e) {
+  <div class="page"><qt-error [texto]="e" /></div>
+} @else if (datos.cargando()) {
+  <qt-cargando />
+} @else {
+  <div class="page">
+    <div class="card-dark ahora">
+      <div>
+        <div class="eyebrow">Bicis en el taller ahora</div>
+        <div class="display gigante">{{ enTaller() }}</div>
+      </div>
+      <div class="fecha">{{ hoy }}</div>
+    </div>
+
+    <div class="chips">
+      @for (c of chips(); track c.filtro) {
+        <button type="button" class="chip" (click)="ordenes(c.filtro)">
+          <div class="chip-arriba">
+            <span class="punto" [style.background]="c.color"></span>
+            <span class="display chip-n">{{ c.n }}</span>
+          </div>
+          <div class="chip-label">{{ c.label }}</div>
+        </button>
+      }
+    </div>
+
+    <div class="section-title">Alertas</div>
+    <div class="stack">
+      @for (a of alertas(); track a.titulo) {
+        <button type="button" class="alerta" [style.border-left-color]="a.color" (click)="a.ir()">
+          <div class="grow">
+            <div class="alerta-titulo">{{ a.titulo }}</div>
+            <div class="alerta-detalle">{{ a.detalle }}</div>
+          </div>
+          <div class="display alerta-n" [style.color]="a.color">{{ a.n }}</div>
+        </button>
+      } @empty {
+        <div class="card todo-bien">
+          <div class="todo-titulo">Todo en orden</div>
+          <div class="muted">No hay nada atrasado ni pendiente por ahora.</div>
+        </div>
+      }
+    </div>
+
+    <div class="section-title">La plata de hoy</div>
+    <div class="grid-2">
+      <a class="card-sm plata-hoy" routerLink="/caja">
+        <div class="eyebrow verde">Entró</div>
+        <div class="display monto">{{ plata(entro()) }}</div>
+      </a>
+      <a class="card-sm plata-hoy" routerLink="/caja">
+        <div class="eyebrow">Salió</div>
+        <div class="display monto">{{ plata(salio()) }}</div>
+      </a>
+    </div>
+    <a class="btn btn-dark vitrina" routerLink="/venta"><span class="mas">+</span> Venta de vitrina</a>
+
+    <a class="card-sm deben" routerLink="/cartera">
+      <div>
+        <div class="eyebrow rojo">Me deben</div>
+        <div class="deudores">{{ deudoresTexto() }}</div>
+      </div>
+      <div class="display deben-monto">{{ plata(meDeben()) }}</div>
+    </a>
+  </div>
+}

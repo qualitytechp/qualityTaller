@@ -1,0 +1,123 @@
+.aviso-titulo {
+  font-size: 15px;
+  font-weight: 700;
+}
+.aviso-texto {
+  font-size: 14px;
+  margin-top: 5px;
+  line-height: 1.4;
+}
+.lineas {
+  display: flex;
+  flex-direction: column;
+  gap: 10px;
+  margin-top: 12px;
+}
+.linea {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  font-size: 14.5px;
+  line-height: 1.35;
+}
+.linea .t-strong {
+  white-space: nowrap;
+}
+.gris {
+  color: var(--gray-400);
+}
+.quitar {
+  width: 32px;
+  height: 32px;
+  flex: 0 0 auto;
+  border-radius: 50%;
+  border: 1px solid var(--border-strong);
+  background: var(--white);
+  color: var(--gray-600);
+  font-size: 12px;
+}
+.olvido {
+  margin-top: 14px;
+  min-height: 50px;
+  font-size: 14.5px;
+}
+.resumen {
+  background: var(--black);
+  color: var(--white);
+  border-radius: 16px;
+  padding: 18px;
+  display: flex;
+  flex-direction: column;
+  gap: 8px;
+}
+.fila {
+  display: flex;
+  justify-content: space-between;
+  font-size: 14px;
+  color: var(--zinc-400);
+}
+.fila.rojo {
+  color: #ff8a72;
+}
+.fila.verde {
+  color: #7ee2a8;
+}
+.raya {
+  height: 1px;
+  background: var(--zinc-700);
+  margin: 4px 0;
+}
+.resumen .eyebrow {
+  color: var(--zinc-400);
+  font-size: 12px;
+}
+.cobra {
+  font-size: 36px;
+}
+.medios {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 8px;
+}
+.medio {
+  min-height: 56px;
+  border-radius: 12px;
+  font-size: 15px;
+  font-weight: 600;
+  background: var(--white);
+  color: var(--gray-700);
+  border: 2px solid var(--border-default);
+}
+.medio.on {
+  background: var(--black);
+  color: var(--white);
+  border-color: var(--black);
+}
+.queda {
+  margin-top: 8px;
+  font-size: 14px;
+  font-weight: 600;
+  color: var(--warning-700);
+  line-height: 1.4;
+}
+.texto-garantia {
+  font-size: 14px;
+  color: var(--gray-600);
+  line-height: 1.4;
+  margin-top: 12px;
+}
+.texto-garantia strong {
+  color: var(--gray-900);
+}
+.nada {
+  text-align: center;
+  padding: 30px 20px;
+  color: var(--gray-500);
+  font-size: 14px;
+}
+.agotado {
+  opacity: 0.5;
+}
+.volver {
+  margin-top: 16px;
+}

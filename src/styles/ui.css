@@ -1,0 +1,413 @@
+/* Piezas de interfaz compartidas. Los valores salen de QualityTaller.dc.html. */
+
+/* ---------- Layout ---------- */
+.page {
+  padding: 16px;
+}
+.stack {
+  display: flex;
+  flex-direction: column;
+  gap: 10px;
+}
+.stack-12 {
+  display: flex;
+  flex-direction: column;
+  gap: 12px;
+}
+.row {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+}
+.row-between {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 10px;
+}
+.grow {
+  flex: 1;
+  min-width: 0;
+}
+.grid-2 {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 10px;
+}
+.grid-3 {
+  display: grid;
+  grid-template-columns: 1fr 1fr 1fr;
+  gap: 8px;
+}
+.ellipsis {
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+}
+.sticky-bar {
+  position: sticky;
+  top: var(--header-h);
+  z-index: 20;
+  background: var(--gray-50);
+  padding: 14px 16px 0;
+}
+
+/* ---------- Tipografía ---------- */
+.display {
+  font-family: var(--font-display);
+  font-weight: 800;
+  line-height: 1;
+}
+.eyebrow {
+  font-size: 11px;
+  font-weight: 600;
+  letter-spacing: 0.08em;
+  text-transform: uppercase;
+  color: var(--gray-500);
+}
+.label {
+  display: block;
+  font-size: 12px;
+  font-weight: 600;
+  letter-spacing: 0.08em;
+  text-transform: uppercase;
+  color: var(--gray-500);
+  margin-bottom: 6px;
+}
+.req {
+  color: var(--red-600);
+}
+.section-title {
+  font-family: var(--font-display);
+  font-weight: 700;
+  font-size: 20px;
+  text-transform: uppercase;
+  letter-spacing: 0.02em;
+  margin: 22px 0 10px;
+}
+.help {
+  font-size: 13px;
+  color: var(--gray-500);
+  margin-top: 6px;
+  line-height: 1.35;
+}
+.muted {
+  color: var(--gray-500);
+}
+.t-strong {
+  font-weight: 600;
+}
+
+/* ---------- Tarjetas ---------- */
+.card {
+  background: var(--white);
+  border: 1px solid var(--border-default);
+  border-radius: 16px;
+  padding: 16px;
+}
+.card-sm {
+  background: var(--white);
+  border: 1px solid var(--border-default);
+  border-radius: 14px;
+  padding: 14px;
+}
+.card-dark {
+  background: var(--black);
+  color: var(--white);
+  border-radius: 18px;
+  padding: 20px;
+}
+.card-dark .eyebrow {
+  color: var(--zinc-400);
+}
+.card-tap {
+  width: 100%;
+  text-align: left;
+  cursor: pointer;
+  box-shadow: 0 1px 2px rgba(0, 0, 0, 0.04);
+  font: inherit;
+}
+.card-tap:active {
+  background: var(--gray-50);
+}
+
+/* ---------- Campos ---------- */
+.input {
+  display: block;
+  width: 100%;
+  min-height: 54px;
+  padding: 14px;
+  font-size: 16px;
+  border: 1px solid var(--border-strong);
+  border-radius: 12px;
+  background: var(--white);
+  outline: none;
+}
+.input:focus {
+  border-color: var(--red-500);
+  box-shadow: 0 0 0 2px var(--red-100);
+}
+textarea.input {
+  line-height: 1.4;
+  resize: vertical;
+  min-height: 110px;
+}
+.input-search {
+  min-height: 52px;
+  padding: 14px 16px;
+  border-radius: 14px;
+}
+.input-money {
+  font-family: var(--font-display);
+  font-weight: 700;
+  font-size: 22px;
+  min-height: 56px;
+}
+
+/* ---------- Botones ---------- */
+.btn {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 10px;
+  width: 100%;
+  min-height: 50px;
+  padding: 0 16px;
+  border: 0;
+  border-radius: 14px;
+  font-size: 15px;
+  font-weight: 700;
+  text-align: center;
+  cursor: pointer;
+  text-decoration: none;
+}
+.btn:disabled,
+.btn.is-off {
+  background: var(--gray-300);
+  color: var(--white);
+  border-color: var(--gray-300);
+}
+.btn-lg {
+  min-height: 58px;
+  font-size: 17px;
+}
+.btn-primary {
+  background: var(--red-600);
+  color: var(--white);
+}
+.btn-primary:active {
+  background: var(--red-700);
+}
+.btn-success {
+  background: var(--success-600);
+  color: var(--white);
+}
+.btn-dark {
+  background: var(--zinc-900);
+  color: var(--white);
+}
+.btn-outline {
+  background: var(--white);
+  color: var(--gray-700);
+  border: 1px solid var(--border-strong);
+  font-weight: 600;
+}
+.btn-add {
+  min-height: 54px;
+  border: 1px dashed var(--red-300);
+  background: var(--red-50);
+  color: var(--red-700);
+}
+.btn-dashed {
+  min-height: 54px;
+  border: 1px dashed var(--border-strong);
+  background: var(--gray-50);
+  color: var(--gray-800);
+}
+.btn-icon {
+  width: 44px;
+  height: 44px;
+  flex: 0 0 auto;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  border: 1px solid var(--border-strong);
+  border-radius: 12px;
+  background: var(--white);
+}
+.qty-btn {
+  width: 42px;
+  height: 42px;
+  border: 1px solid var(--border-strong);
+  border-radius: 11px;
+  background: var(--white);
+  font-size: 21px;
+  font-weight: 700;
+  color: var(--gray-700);
+}
+
+/* ---------- Pastillas ---------- */
+.pills {
+  display: flex;
+  gap: 8px;
+  overflow-x: auto;
+  margin: 0 -16px;
+  padding: 12px 16px;
+  scrollbar-width: none;
+}
+.pills::-webkit-scrollbar {
+  display: none;
+}
+.pills-wrap {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 8px;
+}
+.pill {
+  flex: 0 0 auto;
+  min-height: 42px;
+  padding: 10px 16px;
+  border-radius: 999px;
+  font-size: 14px;
+  font-weight: 600;
+  background: var(--white);
+  color: var(--gray-700);
+  border: 1px solid var(--border-strong);
+}
+.pill.on {
+  background: var(--black);
+  color: var(--white);
+  border-color: var(--black);
+}
+.pill-lg {
+  min-height: 46px;
+}
+
+/* Botón de opción (elegir cliente, bici, mecánico, medio de pago) */
+.choice {
+  width: 100%;
+  text-align: left;
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  background: var(--white);
+  border: 2px solid var(--border-default);
+  border-radius: 14px;
+  padding: 14px;
+  min-height: 64px;
+  font: inherit;
+}
+.choice.on {
+  background: var(--red-50);
+  border-color: var(--red-600);
+}
+.seg {
+  flex: 1;
+  min-height: 52px;
+  border-radius: 12px;
+  font-size: 15px;
+  font-weight: 700;
+  background: var(--white);
+  color: var(--gray-700);
+  border: 1px solid var(--border-strong);
+}
+.seg.on {
+  background: var(--black);
+  color: var(--white);
+  border-color: var(--black);
+}
+
+/* ---------- Estados y avatares ---------- */
+.badge {
+  display: inline-flex;
+  align-items: center;
+  gap: 6px;
+  padding: 4px 10px;
+  border-radius: 999px;
+  font-size: 12px;
+  font-weight: 600;
+  white-space: nowrap;
+}
+.avatar {
+  width: 44px;
+  height: 44px;
+  flex: 0 0 auto;
+  border-radius: 50%;
+  background: var(--gray-200);
+  color: var(--gray-700);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-weight: 700;
+}
+.thumb {
+  width: 60px;
+  height: 60px;
+  flex: 0 0 auto;
+  border-radius: 12px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-family: var(--font-display);
+  font-weight: 800;
+  font-size: 22px;
+  color: var(--white);
+  overflow: hidden;
+}
+
+/* ---------- Estados vacío / carga / error ---------- */
+.empty {
+  text-align: center;
+  padding: 44px 24px;
+  color: var(--gray-500);
+}
+.empty-title {
+  font-family: var(--font-display);
+  font-weight: 700;
+  font-size: 20px;
+  color: var(--gray-700);
+}
+.empty-text {
+  font-size: 14px;
+  margin-top: 6px;
+  line-height: 1.4;
+}
+.error-box {
+  background: var(--red-50);
+  border: 1px solid var(--red-200);
+  border-radius: 16px;
+  padding: 14px;
+  font-size: 14px;
+  color: var(--red-800);
+  line-height: 1.4;
+}
+.warn-box {
+  background: var(--warning-50);
+  border: 1px solid var(--warning-500);
+  border-radius: 16px;
+  padding: 16px;
+  color: var(--warning-700);
+}
+
+/* ---------- Barra de acción fija ---------- */
+.action-bar {
+  position: fixed;
+  bottom: 0;
+  left: 50%;
+  transform: translateX(-50%);
+  width: 100%;
+  max-width: var(--app-max);
+  padding: 12px 16px calc(16px + var(--safe-bottom));
+  background: var(--white);
+  border-top: 1px solid var(--border-default);
+  z-index: 26;
+  display: flex;
+  flex-direction: column;
+  gap: 8px;
+}
+.action-bar-msg {
+  font-size: 13.5px;
+  color: var(--red-700);
+  text-align: center;
+  line-height: 1.35;
+}

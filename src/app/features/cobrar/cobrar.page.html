@@ -1,0 +1,123 @@
+@if (datos.cargando()) {
+  <qt-cargando />
+} @else if (datos.valor(); as d) {
+  @if (d.orden.estado !== 'lista') {
+    <qt-vacio titulo="Esta orden no está lista para entregar" [texto]="'La orden ' + numero + ' tiene que estar marcada como lista.'">
+      <a class="btn btn-outline volver" [routerLink]="['/orden', numero]">Ver la orden</a>
+    </qt-vacio>
+  } @else {
+    <div class="page stack-12">
+      @if (sinRepuestos() && !esGarantia()) {
+        <div class="warn-box">
+          <div class="aviso-titulo">Revisa antes de cobrar</div>
+          <div class="aviso-texto">
+            No hay ningún repuesto en esta orden. Si se usó algo del inventario y no está aquí, esa plata se pierde.
+          </div>
+        </div>
+      }
+
+      @if (esGarantia()) {
+        <div class="error-box">Orden de garantía de {{ d.orden.garantiaDe }}: se entrega sin cobro.</div>
+      }
+
+      <div class="card">
+        <div class="eyebrow">Lo que se está facturando</div>
+        <div class="lineas">
+          @for (i of items(); track i.id) {
+            <div class="linea">
+              <span class="grow">
+                {{ i.nombre }}
+                @if (i.cantidad > 1) {
+                  <span class="gris">× {{ i.cantidad }}</span>
+                }
+              </span>
+              <span class="t-strong">{{ plata(i.precio * i.cantidad) }}</span>
+              @if (extra().includes(i)) {
+                <button type="button" class="quitar" [attr.aria-label]="'Quitar ' + i.nombre" (click)="quitarExtra(i.id)">✕</button>
+              }
+            </div>
+          } @empty {
+            <div class="gris">La orden no tiene ítems.</div>
+          }
+        </div>
+        <button type="button" class="btn btn-add olvido" (click)="busqueda.set(''); hoja.set(true)">Se me olvidó agregar un repuesto</button>
+      </div>
+
+      <div class="resumen">
+        <div class="fila"><span>Total del trabajo</span><span>{{ plata(esGarantia() ? 0 : total()) }}</span></div>
+        @if (descuento() > 0 && !esGarantia()) {
+          <div class="fila rojo"><span>Descuento aplicado</span><span>− {{ plata(descuento()) }}</span></div>
+        }
+        @if (adelanto() > 0) {
+          <div class="fila verde"><span>Adelanto recibido</span><span>− {{ plata(adelanto()) }}</span></div>
+        }
+        <div class="raya"></div>
+        <div class="row-between">
+          <span class="eyebrow">Se cobra ahora</span>
+          <span class="display cobra">{{ plata(paga()) }}</span>
+        </div>
+      </div>
+
+      @if (saldo() > 0) {
+        <div class="card">
+          <span class="label">Cómo paga</span>
+          <div class="medios">
+            @for (m of medios; track m) {
+              <button type="button" class="medio" [class.on]="medio() === m" (click)="medio.set(m)">{{ m }}</button>
+            }
+          </div>
+        </div>
+
+        <div class="card">
+          <label class="label" for="paga">¿Cuánto paga ahora?</label>
+          <qt-campo-plata campoId="paga" [valor]="pagaAhora()" (valorChange)="escribirPago($event)" />
+          @if (queda() > 0) {
+            <div class="queda">Quedan {{ plata(queda()) }} en la cartera de {{ d.cliente?.nombre }}.</div>
+          } @else {
+            <div class="help">Paga todo el saldo.</div>
+          }
+        </div>
+      }
+
+      <div class="card">
+        <span class="label">Garantía en mano de obra</span>
+        <div class="pills-wrap">
+          @for (g of diasGarantia; track g) {
+            <button type="button" class="pill" [class.on]="garantia() === g" (click)="garantia.set(g)">{{ g ? g + ' días' : 'Sin garantía' }}</button>
+          }
+        </div>
+        <div class="texto-garantia">
+          @if (garantia() > 0) {
+            Al entregar queda con garantía de <strong>{{ garantia() }} días</strong> en mano de obra, hasta el {{ hasta() }}.
+          } @else {
+            Esta entrega queda sin garantía.
+          }
+        </div>
+      </div>
+    </div>
+
+    <div class="action-bar">
+      <button type="button" class="btn btn-primary btn-lg" [class.is-off]="cobrando()" (click)="cobrar()">{{ etiqueta() }}</button>
+    </div>
+
+    @if (hoja()) {
+      <qt-hoja titulo="Agregar repuesto usado" [buscador]="true" placeholder="Nombre, referencia o marca" [(busqueda)]="busqueda" (cerrar)="hoja.set(false)">
+        @for (r of repuestosVistos(); track r.id) {
+          <button
+            qt-opcion
+            [nombre]="r.nombre"
+            [meta]="r.ref + ' · quedan ' + disponible(r)"
+            [metaColor]="disponible(r) <= r.minimo ? 'var(--red-600)' : 'var(--gray-500)'"
+            [precio]="plata(r.precio)"
+            [class.agotado]="disponible(r) <= 0"
+            (click)="agregar(r)"
+          ></button>
+        } @empty {
+          <div class="nada">Nada con ese nombre.</div>
+        }
+      </qt-hoja>
+    }
+  }
+} @else {
+  <qt-vacio titulo="No se encontró la orden" texto="Búscala en Órdenes." />
+}

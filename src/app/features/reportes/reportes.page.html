@@ -1,0 +1,94 @@
+@if (datos.cargando()) {
+  <qt-cargando />
+} @else {
+  <div class="page">
+    <div class="card-dark">
+      <div class="eyebrow">Me quedó en {{ nombreMes }}</div>
+      <div class="display grande" [class.rojo]="este().queda < 0">{{ plata(este().queda) }}</div>
+      <div class="comparacion" [class.bueno]="comparacion().bueno">{{ comparacion().texto }}</div>
+      <div class="pie">
+        <div>
+          <div class="eyebrow">Entró</div>
+          <div class="display medio">{{ plata(este().entro) }}</div>
+        </div>
+        <div>
+          <div class="eyebrow">Salió</div>
+          <div class="display medio">{{ plata(este().salio) }}</div>
+        </div>
+      </div>
+    </div>
+
+    <div class="section-title">Mi promesa al cliente</div>
+    <div class="grid-2">
+      <div class="card">
+        <div class="eyebrow">Entregué a tiempo</div>
+        <div class="display cifra verde">{{ promesa().aTiempo }}</div>
+      </div>
+      <div class="card">
+        <div class="eyebrow">Tiempo promedio</div>
+        <div class="display cifra">{{ promesa().tiempo }}</div>
+      </div>
+      <div class="card">
+        <div class="eyebrow">Bicis que entraron</div>
+        <div class="display cifra">{{ promesa().entraron }}</div>
+      </div>
+      <div class="card">
+        <div class="eyebrow">Bicis que salieron</div>
+        <div class="display cifra">{{ promesa().salieron }}</div>
+      </div>
+    </div>
+
+    <div class="section-title">Qué deja más plata</div>
+    <div class="card barras">
+      @if (!servicios().delMes && servicios().lista.length) {
+        <div class="nota">Este mes todavía no hay entregas: esto es de siempre.</div>
+      }
+      @for (s of servicios().lista; track s.nombre; let primero = $first) {
+        <div>
+          <div class="row-between">
+            <span class="nombre">{{ s.nombre }}</span>
+            <span class="display monto">{{ plata(s.monto) }}</span>
+          </div>
+          <div class="riel"><div class="barra" [class.primero]="primero" [style.width.%]="s.pct"></div></div>
+          <div class="meta">{{ s.meta }}</div>
+        </div>
+      } @empty {
+        <div class="nota">Cuando se entreguen bicis, aquí sale qué servicio deja más plata.</div>
+      }
+    </div>
+
+    <div class="section-title">Repuestos quietos</div>
+    <div class="stack-8">
+      @for (q of quietos(); track q.r.id) {
+        <div class="card-sm fila">
+          <div class="grow">
+            <div class="nombre">{{ q.r.nombre }}</div>
+            <div class="meta">{{ quietosTexto(q.r.cantidad) }} · sin salir hace más de 2 meses</div>
+          </div>
+          <div class="display gris">{{ plata(q.plata) }}</div>
+        </div>
+      } @empty {
+        <div class="nota centro">Todo el inventario se está moviendo.</div>
+      }
+    </div>
+
+    <div class="section-title">Clientes que no vuelven</div>
+    <div class="stack-8">
+      @for (x of dormidos(); track x.c.id) {
+        <div class="card-sm fila">
+          <div class="grow">
+            <div class="nombre">{{ x.c.nombre }}</div>
+            <div class="meta">No vuelve hace {{ mesesSin(x.ultima) }} · ha gastado {{ plata(x.gastado) }}</div>
+          </div>
+          <button type="button" class="btn btn-success escribir" (click)="escribir(x.c)">Escribirle</button>
+        </div>
+      } @empty {
+        <div class="nota centro">Nadie lleva más de 6 meses sin volver.</div>
+      }
+    </div>
+  </div>
+
+  <div class="action-bar">
+    <button type="button" class="btn btn-primary btn-lg" (click)="descargar()">Descargar para el contador</button>
+  </div>
+}

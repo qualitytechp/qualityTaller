@@ -1,0 +1,274 @@
+.cabeza {
+  background: var(--black);
+  color: var(--white);
+  padding: 0 16px 16px;
+}
+.thumb.chico {
+  width: 54px;
+  height: 54px;
+  font-size: 20px;
+}
+.t-cliente {
+  font-size: 16px;
+  font-weight: 600;
+}
+.t-bici {
+  font-size: 13px;
+  color: var(--zinc-400);
+}
+.fechas {
+  display: flex;
+  gap: 16px;
+  margin-top: 14px;
+  font-size: 12.5px;
+  color: var(--zinc-400);
+}
+.fechas .tarde {
+  color: #ff8a72;
+}
+.pestanas {
+  position: sticky;
+  top: var(--header-h);
+  z-index: 20;
+  background: var(--white);
+  border-bottom: 1px solid var(--border-default);
+  display: flex;
+  overflow-x: auto;
+  scrollbar-width: none;
+}
+.pestana {
+  flex: 1 0 auto;
+  padding: 15px 16px;
+  min-height: 54px;
+  background: transparent;
+  border: 0;
+  border-bottom: 3px solid transparent;
+  color: var(--gray-500);
+  font-size: 14px;
+  font-weight: 600;
+  white-space: nowrap;
+}
+.pestana.on {
+  border-bottom-color: var(--red-600);
+  color: var(--gray-900);
+}
+.grande {
+  font-size: 17px;
+  font-weight: 600;
+  margin-top: 4px;
+}
+.dos {
+  gap: 10px;
+  margin-top: 12px;
+}
+.dos .btn {
+  flex: 1;
+}
+.datos-bici {
+  display: flex;
+  flex-direction: column;
+  gap: 6px;
+  margin-top: 10px;
+  font-size: 14px;
+  color: var(--gray-600);
+}
+.datos-bici strong {
+  color: var(--gray-900);
+}
+.ver-bici {
+  margin-top: 12px;
+  font-size: 14px;
+}
+.datos {
+  gap: 14px;
+}
+.dato {
+  font-size: 15px;
+  font-weight: 600;
+  margin-top: 3px;
+}
+.tarde,
+.rojo {
+  color: var(--red-600);
+}
+.verde {
+  color: var(--success-700);
+}
+.total {
+  font-size: 24px;
+  margin-top: 1px;
+}
+.cita {
+  font-size: 16px;
+  line-height: 1.45;
+  margin-top: 6px;
+  color: var(--gray-800);
+}
+.texto {
+  font-size: 15px;
+  margin-top: 6px;
+  color: var(--gray-800);
+  line-height: 1.4;
+}
+.como {
+  margin-top: 8px;
+  line-height: 1.4;
+}
+.reportado {
+  background: var(--gray-100);
+  border: 1px dashed var(--border-strong);
+  border-radius: 16px;
+  padding: 16px;
+}
+.eyebrow.rojo {
+  color: var(--red-700);
+}
+.diag {
+  font-size: 16px;
+  line-height: 1.5;
+  margin-top: 6px;
+}
+.firma {
+  font-size: 13px;
+  color: var(--gray-400);
+  margin-top: 10px;
+}
+.corregir,
+.escribir {
+  margin-top: 12px;
+}
+.corriendo {
+  position: sticky;
+  top: calc(var(--header-h) + 54px);
+  z-index: 15;
+  background: var(--zinc-900);
+  color: var(--white);
+  padding: 14px 16px;
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+}
+.corriendo .eyebrow {
+  color: var(--zinc-400);
+  font-size: 12px;
+}
+.corriendo .display {
+  font-size: 30px;
+}
+.t-item {
+  font-size: 15px;
+  font-weight: 600;
+  line-height: 1.3;
+}
+.meta {
+  font-size: 12.5px;
+  color: var(--gray-500);
+  margin-top: 3px;
+}
+.sub {
+  font-size: 19px;
+  white-space: nowrap;
+}
+.linea {
+  font-size: 15px;
+}
+.saldo {
+  background: var(--black);
+  color: var(--white);
+  border-radius: 14px;
+  padding: 16px;
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+}
+.saldo .eyebrow {
+  color: var(--zinc-400);
+  font-size: 12px;
+}
+.saldo .display {
+  font-size: 30px;
+}
+.foto {
+  padding: 0;
+  text-align: left;
+  border-radius: 14px;
+  overflow: hidden;
+  border: 1px solid var(--border-default);
+  background: var(--white);
+  font: inherit;
+}
+.foto .img {
+  height: 120px;
+  background: var(--gray-200);
+}
+.pie {
+  padding: 8px 10px;
+  font-size: 13px;
+}
+.pie .muted {
+  font-size: 11.5px;
+}
+.botones-fotos {
+  margin-top: 12px;
+}
+.linea-tiempo {
+  display: flex;
+  flex-direction: column;
+}
+.evento {
+  display: flex;
+  gap: 12px;
+}
+.riel {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  flex: 0 0 auto;
+}
+.punto {
+  width: 11px;
+  height: 11px;
+  border-radius: 50%;
+  background: var(--red-600);
+  margin-top: 6px;
+}
+.barra {
+  width: 2px;
+  flex: 1;
+  min-height: 22px;
+  background: var(--border-default);
+}
+.evento .grow {
+  padding-bottom: 18px;
+}
+.t-evento {
+  font-size: 15px;
+  font-weight: 600;
+  line-height: 1.3;
+}
+.evento .muted {
+  font-size: 13px;
+  margin-top: 2px;
+}
+.visor {
+  position: fixed;
+  inset: 0;
+  z-index: 46;
+  background: rgba(0, 0, 0, 0.92);
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+  padding: 16px 16px calc(16px + var(--safe-bottom));
+  gap: 16px;
+}
+.grande-img {
+  flex: 1;
+  min-height: 0;
+}
+.grande-img ::ng-deep img {
+  object-fit: contain;
+}
+.visor-botones {
+  display: flex;
+  gap: 10px;
+}

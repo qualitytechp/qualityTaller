@@ -1,0 +1,263 @@
+@if (datos.error(); as e) {
+  <div class="page"><qt-error [texto]="e" /></div>
+} @else if (datos.cargando()) {
+  <qt-cargando />
+} @else if (datos.valor(); as d) {
+  <!-- Cabecera negra con la bici, el cliente y el estado -->
+  <div class="cabeza">
+    <div class="row">
+      <qt-foto class="thumb chico" [fotoId]="d.orden.fotos[0]?.id ?? d.bici?.fotoId" [style.background]="tonoBici()">{{ inicialBici() }}</qt-foto>
+      <div class="grow">
+        <div class="t-cliente">{{ d.cliente?.nombre }}</div>
+        <div class="t-bici">{{ biciTexto() }}</div>
+      </div>
+      <qt-estado [estado]="d.orden.estado" />
+    </div>
+    <div class="fechas">
+      <span>{{ diasTexto() }}</span>
+      <span [class.tarde]="tarde()">{{ prometidaTexto() }}</span>
+    </div>
+  </div>
+
+  <nav class="pestanas" aria-label="Secciones de la orden">
+    @for (p of pestanas; track p.k) {
+      <button type="button" class="pestana" [class.on]="pestana() === p.k" (click)="elegirPestana(p.k)">{{ p.label }}</button>
+    }
+  </nav>
+
+  @switch (pestana()) {
+    <!-- ───────── Resumen ───────── -->
+    @case ('resumen') {
+      <div class="page stack-12">
+        @if (sesion.vePlata()) {
+          <div class="card">
+            <div class="eyebrow">Cliente</div>
+            <div class="grande">{{ d.cliente?.nombre }}</div>
+            <div class="muted">{{ d.cliente?.celular }}</div>
+            <div class="row dos">
+              <a class="btn btn-outline" [href]="enlaceLlamar()">Llamar</a>
+              <button type="button" class="btn btn-success" (click)="whatsappCliente()">WhatsApp</button>
+            </div>
+          </div>
+        }
+        <div class="card">
+          <div class="eyebrow">La bicicleta</div>
+          <div class="grande">{{ biciTexto() }}</div>
+          <div class="datos-bici">
+            <div>
+              Tipo · {{ d.bici?.tipo }}{{ d.bici?.talla ? ' · Talla ' + d.bici?.talla : '' }}{{ d.bici?.color ? ' · ' + d.bici?.color : '' }}
+            </div>
+            <div>Serie · <strong>{{ d.bici?.serie }}</strong></div>
+          </div>
+          @if (sesion.vePlata()) {
+            <a class="btn btn-outline ver-bici" [routerLink]="['/bici', d.orden.biciId]">Ver la hoja de vida de esta bici</a>
+          }
+        </div>
+        <div class="card grid-2 datos">
+          <div>
+            <div class="eyebrow">Fecha prometida</div>
+            <div class="dato" [class.tarde]="tarde()">{{ cuando(d.orden.prometida) }}</div>
+          </div>
+          <div>
+            <div class="eyebrow">Prioridad</div>
+            <div class="dato" [class.tarde]="d.orden.prioridad === 'Urgente'">{{ d.orden.prioridad }}</div>
+          </div>
+          <div>
+            <div class="eyebrow">Mecánico</div>
+            <div class="dato">{{ d.mecanico?.nombre ?? 'Sin asignar' }}</div>
+          </div>
+          @if (sesion.vePlata()) {
+            <div>
+              <div class="eyebrow">Total hasta ahora</div>
+              <div class="display total">{{ plata(total()) }}</div>
+            </div>
+          }
+        </div>
+        @if (nota()) {
+          <div class="error-box">{{ nota() }}</div>
+        }
+        <div class="card">
+          <div class="eyebrow">Lo que dijo el cliente</div>
+          <div class="cita">“{{ d.orden.reportado }}”</div>
+        </div>
+        <div class="card">
+          <div class="eyebrow">Qué traía puesto</div>
+          <div class="texto">{{ accesorios() }}</div>
+          <div class="muted como">Cómo llegó: {{ d.orden.golpes || 'Sin anotaciones' }}</div>
+        </div>
+      </div>
+    }
+
+    <!-- ───────── Diagnóstico ───────── -->
+    @case ('diagnostico') {
+      <div class="page stack-12">
+        <div class="reportado">
+          <div class="eyebrow">Lo que dijo el cliente</div>
+          <div class="texto">“{{ d.orden.reportado }}”</div>
+        </div>
+        @if (editandoDiag()) {
+          <div class="card">
+            <label class="label" for="diag">Lo que encontró el mecánico</label>
+            <textarea
+              id="diag"
+              class="input"
+              [ngModel]="textoDiag()"
+              (ngModelChange)="textoDiag.set($event)"
+              placeholder="Guaya pelada, pastillas gastadas, rin descentrado…"
+            ></textarea>
+            <div class="row dos">
+              <button type="button" class="btn btn-outline" (click)="editandoDiag.set(false)">Cancelar</button>
+              <button type="button" class="btn btn-primary" (click)="guardarDiagnostico()">Guardar</button>
+            </div>
+          </div>
+        } @else if (d.orden.diagnostico) {
+          <div class="card">
+            <div class="eyebrow rojo">Lo que encontró el mecánico</div>
+            <div class="diag">{{ d.orden.diagnostico }}</div>
+            <div class="firma">{{ d.mecanico?.nombre ?? '' }}</div>
+            @if (puedeEditarDiag()) {
+              <button type="button" class="btn btn-outline corregir" (click)="abrirDiagnostico()">Corregir el diagnóstico</button>
+            }
+          </div>
+        } @else {
+          <qt-vacio titulo="Todavía no hay diagnóstico" texto="El mecánico lo escribe cuando revise la bici.">
+            @if (puedeEditarDiag()) {
+              <button type="button" class="btn btn-add escribir" (click)="abrirDiagnostico()">Escribir el diagnóstico</button>
+            }
+          </qt-vacio>
+        }
+      </div>
+    }
+
+    <!-- ───────── Trabajo ───────── -->
+    @case ('trabajo') {
+      @if (sesion.vePlata()) {
+        <div class="corriendo">
+          <span class="eyebrow">Total corriendo</span>
+          <span class="display">{{ plata(total()) }}</span>
+        </div>
+      }
+      <div class="page stack">
+        @for (i of d.orden.items; track i.id) {
+          <div class="card-sm row">
+            <div class="grow">
+              <div class="t-item">{{ i.nombre }}</div>
+              <div class="meta">{{ meta(i) }}</div>
+            </div>
+            @if (sesion.vePlata()) {
+              <div class="display sub">{{ plata(i.precio * i.cantidad) }}</div>
+            }
+          </div>
+        } @empty {
+          <qt-vacio titulo="Nada cargado todavía" texto="Agrega la mano de obra y los repuestos que se le van poniendo." />
+        }
+        @if (sesion.vePlata() && d.orden.estado !== 'entregada' && d.orden.estado !== 'rechazada' && d.orden.estado !== 'abandonada') {
+          <a class="btn btn-add" [routerLink]="['/cotizacion', d.orden.numero]">+ Agregar servicio o repuesto</a>
+        }
+        @if (sesion.vePlata()) {
+          @if (d.orden.descuento > 0) {
+            <div class="card-sm row-between linea">
+              <span class="muted">Descuento</span>
+              <span class="rojo t-strong">− {{ plata(d.orden.descuento) }}</span>
+            </div>
+          }
+          @if (d.orden.adelanto > 0) {
+            <div class="card-sm row-between linea">
+              <span class="muted">Adelanto recibido</span>
+              <span class="verde t-strong">− {{ plata(d.orden.adelanto) }}</span>
+            </div>
+          }
+          <div class="saldo">
+            <span class="eyebrow">{{ d.orden.estado === 'entregada' ? 'Cobrado al entregar' : 'Saldo por cobrar' }}</span>
+            <span class="display">{{ plata(d.orden.pago ? d.orden.pago.monto : saldo()) }}</span>
+          </div>
+        }
+      </div>
+    }
+
+    <!-- ───────── Fotos ───────── -->
+    @case ('fotos') {
+      <div class="page">
+        <div class="grid-2">
+          @for (f of fotos(); track f.id) {
+            <button type="button" class="foto" (click)="fotoAbierta.set(f.id)">
+              <qt-foto class="img" [fotoId]="f.id" [alt]="f.momento" />
+              <div class="pie">
+                <div class="t-strong">{{ f.momento }}</div>
+                <div class="muted">{{ cuando(f.en) }}</div>
+              </div>
+            </button>
+          } @empty {
+            <qt-vacio titulo="Sin fotos" texto="Toma fotos de cómo va la bici." />
+          }
+        </div>
+        <div class="stack botones-fotos">
+          <qt-camara clase="btn btn-dashed" (foto)="fotoTomada($event)">
+            <svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8"><rect x="3" y="6" width="18" height="14" rx="2"></rect><circle cx="12" cy="13" r="3.5"></circle><path d="M8 6l1.5-2h5L16 6"></path></svg>
+            Tomar otra foto
+          </qt-camara>
+          @if (fotos().length && sesion.vePlata()) {
+            <button type="button" class="btn btn-outline" (click)="compartirFotos(d.orden.fotos.map(f => f.id))">Compartir las fotos por WhatsApp</button>
+          }
+        </div>
+      </div>
+    }
+
+    <!-- ───────── Historial ───────── -->
+    @case ('historial') {
+      <div class="page linea-tiempo">
+        @for (h of historial(); track $index) {
+          <div class="evento">
+            <div class="riel"><span class="punto"></span><span class="barra"></span></div>
+            <div class="grow">
+              <div class="t-evento">{{ h.que }}</div>
+              <div class="muted">{{ h.quien }} · {{ cuando(h.en) }}</div>
+            </div>
+          </div>
+        }
+      </div>
+    }
+  }
+
+  <!-- El botón de abajo cambia según el estado -->
+  @if (accion(); as a) {
+    <div class="action-bar">
+      <button type="button" class="btn btn-primary btn-lg" [class.is-off]="ocupado()" (click)="a.hacer()">{{ a.label }}</button>
+      @if (a.sec; as s) {
+        <button type="button" class="btn btn-outline" (click)="s.hacer()">{{ s.label }}</button>
+      }
+    </div>
+  }
+
+  @if (hoja() === 'respuesta') {
+    <qt-hoja titulo="Respuesta del cliente" (cerrar)="hoja.set(null)">
+      <button qt-opcion nombre="Aprobó todo por teléfono o WhatsApp" meta="Queda registrado con fecha, hora y quién lo anotó" (click)="aprobarTodo()"></button>
+      <button qt-opcion nombre="Aprobó solo una parte" meta="Abre la vista del cliente para marcar ítem por ítem" (click)="aprobarParte()"></button>
+      <button qt-opcion nombre="Dijo que no" meta="La orden queda rechazada y se devuelve la bici" metaColor="var(--red-600)" (click)="rechazar()"></button>
+      <button qt-opcion nombre="Todavía no responde" meta="Volverle a escribir por WhatsApp" (click)="insistir()"></button>
+    </qt-hoja>
+  }
+
+  @if (hoja() === 'garantia') {
+    <qt-hoja titulo="Orden de garantía" (cerrar)="hoja.set(null)">
+      <div class="muted">Se abre una orden nueva ligada a {{ d.orden.numero }}, urgente y sin cobro.</div>
+      <label class="label" for="motivo">¿Qué pasó con la bici? <span class="req">*</span></label>
+      <textarea id="motivo" class="input" [ngModel]="motivoGarantia()" (ngModelChange)="motivoGarantia.set($event)" placeholder="Volvió a sonar la transmisión…"></textarea>
+      <button type="button" class="btn btn-dark btn-lg" (click)="abrirGarantia()">Abrir la orden de garantía</button>
+    </qt-hoja>
+  }
+
+  @if (fotoAbierta(); as f) {
+    <div class="visor" role="dialog" aria-modal="true" (click)="fotoAbierta.set(null)">
+      <qt-foto class="grande-img" [fotoId]="f" alt="Foto de la orden" />
+      <div class="visor-botones" (click)="$event.stopPropagation()">
+        @if (sesion.vePlata()) {
+          <button type="button" class="btn btn-success" (click)="compartirFotos([f])">Compartir</button>
+        }
+        <button type="button" class="btn btn-outline" (click)="fotoAbierta.set(null)">Cerrar</button>
+      </div>
+    </div>
+  }
+} @else {
+  <qt-vacio titulo="No se encontró la orden" texto="Puede que se haya borrado. Búscala en Órdenes." />
+}

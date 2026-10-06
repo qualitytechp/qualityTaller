@@ -1,0 +1,71 @@
+@if (datos.cargando()) {
+  <qt-cargando />
+} @else if (datos.valor(); as d) {
+  @if (d.orden.estado !== 'cotizacion') {
+    <qt-vacio titulo="No hay cotización por aprobar" [texto]="'La orden ' + numero + ' no está esperando la respuesta del cliente.'">
+      <a class="btn btn-outline volver" [routerLink]="['/orden', numero]">Ver la orden</a>
+    </qt-vacio>
+  } @else {
+    <div class="page">
+      <div class="card-dark">
+        <div class="marca">{{ d.taller?.nombre }}</div>
+        <div class="saludo">Hola {{ nombreCorto() }}, revisamos su {{ biciTexto() }}. Esto es lo que encontramos y lo que costaría.</div>
+        <div class="orden">Orden {{ numero }}</div>
+      </div>
+
+      <div class="card bloque">
+        <div class="eyebrow">Lo que encontramos</div>
+        <div class="diag">{{ d.orden.diagnostico || 'El detalle está en cada ítem.' }}</div>
+      </div>
+
+      @if (fotos().length) {
+        <div class="grid-2 fotos">
+          @for (f of fotos(); track f.id) {
+            <div class="foto">
+              <qt-foto [fotoId]="f.id" [alt]="f.momento" />
+              <span>{{ f.momento }}</span>
+            </div>
+          }
+        </div>
+      }
+
+      <div class="indicacion">Toque cada ítem para aprobar solo lo que quiera.</div>
+      <div class="stack-8">
+        @for (i of items(); track i.id) {
+          <button type="button" class="item" [class.on]="!desmarcados().has(i.id)" (click)="alternar(i)" [attr.aria-pressed]="!desmarcados().has(i.id)">
+            <span class="check">
+              @if (!desmarcados().has(i.id)) {
+                <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="3" stroke-linecap="round"><path d="M5 13l4 4L19 7"></path></svg>
+              }
+            </span>
+            <div class="grow">
+              <div class="nombre">{{ i.nombre }}</div>
+              <div class="meta">{{ metaItem(i) }}</div>
+            </div>
+            <div class="display sub">{{ plata(i.precio * i.cantidad) }}</div>
+          </button>
+        }
+      </div>
+
+      <div class="total-caja">
+        <div>
+          <div class="eyebrow">Total aprobado</div>
+          <div class="conteo">{{ conteo() }}{{ descuento() > 0 ? ' · descuento ' + plata(descuento()) : '' }}</div>
+        </div>
+        <div class="display">{{ plata(total()) }}</div>
+      </div>
+      <div class="garantia">
+        Garantía de {{ d.taller?.garantiaDias ?? 30 }} días en mano de obra. En repuestos aplica la del fabricante.
+      </div>
+    </div>
+
+    <div class="action-bar">
+      <button type="button" class="btn btn-success btn-lg" [class.is-off]="!marcados().length || guardando()" (click)="aprobar()">
+        {{ etiquetaAprobar() }}
+      </button>
+      <button type="button" class="btn btn-outline" (click)="rechazar()">No autorizo el trabajo</button>
+    </div>
+  }
+} @else {
+  <qt-vacio titulo="No se encontró la orden" texto="Búscala en Órdenes." />
+}

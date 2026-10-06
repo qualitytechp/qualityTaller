@@ -1,0 +1,253 @@
+<qt-pasos [paso]="paso()" [titulo]="titulos[paso() - 1]" [ayuda]="ayudas[paso() - 1]" />
+
+<div class="cuerpo">
+  @if (retomado()) {
+    <div class="retomado">
+      <div class="grow">Seguimos donde ibas: lo que habías escrito quedó guardado.</div>
+      <button type="button" class="btn btn-outline chico" (click)="empezarDeCero()">Empezar de cero</button>
+    </div>
+  }
+
+  @switch (paso()) {
+    <!-- ───────── Paso 1: ¿De quién es? ───────── -->
+    @case (1) {
+      <input
+        class="input input-search buscar"
+        type="search"
+        placeholder="Nombre, cédula o celular"
+        [ngModel]="busqueda()"
+        (ngModelChange)="busqueda.set($event)"
+        autocomplete="off"
+      />
+      <div class="stack lista">
+        @for (c of clientesVistos(); track c.id) {
+          <button type="button" class="choice" [class.on]="b().clienteId === c.id" (click)="elegirCliente(c)">
+            <div class="avatar chico">{{ inicial(c.nombre) }}</div>
+            <div class="grow">
+              <div class="nombre">{{ c.nombre }}</div>
+              <div class="meta">{{ c.celular }}{{ c.cedula ? ' · CC ' + c.cedula : '' }}</div>
+            </div>
+          </button>
+        } @empty {
+          @if (busqueda()) {
+            <div class="nada">Nadie con ese nombre o número. Créalo como cliente nuevo.</div>
+          }
+        }
+      </div>
+      <button type="button" class="btn btn-add" (click)="alternarNuevoCliente()">+ Es cliente nuevo</button>
+      @if (b().nuevoCliente) {
+        <div class="card stack-14">
+          <div>
+            <label class="label" for="nombre">Nombre <span class="req">*</span></label>
+            <input id="nombre" class="input" [ngModel]="b().nombre" (ngModelChange)="set('nombre', $event)" placeholder="Nombre y apellido" autocomplete="off" />
+          </div>
+          <div>
+            <label class="label" for="celular">Celular <span class="req">*</span></label>
+            <input id="celular" class="input" type="tel" inputmode="tel" [ngModel]="b().celular" (ngModelChange)="set('celular', $event)" placeholder="300 000 0000" autocomplete="off" />
+          </div>
+          @if (celularRepetido(); as rep) {
+            <div class="aviso-ambar">
+              <div class="grow">Ese celular ya es de <strong>{{ rep.nombre }}</strong>.</div>
+              <button type="button" class="btn btn-dark chico" (click)="elegirCliente(rep)">Usar ese cliente</button>
+            </div>
+          }
+          <div class="grid-2">
+            <div>
+              <label class="label" for="cedula">Cédula</label>
+              <input id="cedula" class="input" inputmode="numeric" [ngModel]="b().cedula" (ngModelChange)="set('cedula', $event)" placeholder="Opcional" autocomplete="off" />
+            </div>
+            <div>
+              <label class="label" for="correo">Correo</label>
+              <input id="correo" class="input" type="email" [ngModel]="b().correo" (ngModelChange)="set('correo', $event)" placeholder="Opcional" autocomplete="off" />
+            </div>
+          </div>
+          <div class="help">Con el nombre y el celular es suficiente para arrancar. Lo demás se completa después.</div>
+        </div>
+      }
+    }
+
+    <!-- ───────── Paso 2: ¿Cuál bici? ───────── -->
+    @case (2) {
+      @if (cliente(); as c) {
+        <div class="de-quien">Bicis de <strong>{{ c.nombre }}</strong></div>
+      }
+      <div class="stack lista">
+        @for (x of bicisCliente(); track x.id) {
+          <button type="button" class="choice bici" [class.on]="b().biciId === x.id" (click)="elegirBici(x)">
+            <qt-foto class="thumb grande" [fotoId]="x.fotoId" [style.background]="tono(x.id)">{{ inicial(x.marca) }}</qt-foto>
+            <div class="grow">
+              <div class="nombre">{{ x.marca }} {{ x.modelo }}</div>
+              <div class="meta">{{ x.tipo }}{{ x.color ? ' · ' + x.color : '' }}{{ x.talla ? ' · talla ' + x.talla : '' }}</div>
+              <div class="serie">Serie {{ x.serie }}</div>
+            </div>
+          </button>
+        }
+      </div>
+      @if (bicisCliente().length) {
+        <button type="button" class="btn btn-add" (click)="alternarNuevaBici()">+ Es una bici nueva</button>
+      }
+      @if (formBici()) {
+        <div class="card stack-14">
+          <div class="grid-2">
+            <div>
+              <label class="label" for="marca">Marca <span class="req">*</span></label>
+              <input id="marca" class="input" [ngModel]="b().marca" (ngModelChange)="set('marca', $event)" placeholder="Trek, GW…" autocomplete="off" />
+            </div>
+            <div>
+              <label class="label" for="modelo">Modelo</label>
+              <input id="modelo" class="input" [ngModel]="b().modelo" (ngModelChange)="set('modelo', $event)" placeholder="Marlin 7" autocomplete="off" />
+            </div>
+          </div>
+          <div>
+            <span class="label">Tipo</span>
+            <div class="pills sin-margen">
+              @for (t of tipos; track t) {
+                <button type="button" class="pill pill-lg" [class.on]="b().tipo === t" (click)="set('tipo', t)">{{ t }}</button>
+              }
+            </div>
+          </div>
+          <div class="grid-2">
+            <div>
+              <label class="label" for="color">Color</label>
+              <input id="color" class="input" [ngModel]="b().color" (ngModelChange)="set('color', $event)" placeholder="Negro" autocomplete="off" />
+            </div>
+            <div>
+              <label class="label" for="talla">Talla</label>
+              <input id="talla" class="input" [ngModel]="b().talla" (ngModelChange)="set('talla', $event)" placeholder="M / 54" autocomplete="off" />
+            </div>
+          </div>
+          <div>
+            <label class="label" for="serie">Número de serie <span class="req">*</span></label>
+            <input id="serie" class="input mayus" [ngModel]="b().serie" (ngModelChange)="set('serie', $event)" placeholder="Debajo del marco, en la caja de pedales" autocomplete="off" autocapitalize="characters" />
+            <div class="help">Es lo único que identifica la bici de verdad. Si no se alcanza a ver, tómale una foto.</div>
+          </div>
+          @if (serieRepetida(); as rep) {
+            <div class="aviso-ambar">
+              <div class="grow">
+                Esa serie ya está registrada: {{ rep.bici.marca }} {{ rep.bici.modelo }}
+                @if (!rep.esDelCliente) {
+                  de <strong>{{ rep.dueno?.nombre ?? 'otro cliente' }}</strong>. Revísala antes de seguir.
+                }
+              </div>
+              <button type="button" class="btn btn-dark chico" (click)="usarBiciExistente(rep.bici)">Usar esa bici</button>
+            </div>
+          }
+          @if (b().fotoBiciId; as f) {
+            <qt-foto class="foto-bici" [fotoId]="f" alt="Foto de la bici" />
+          }
+          <qt-camara (foto)="set('fotoBiciId', $event)">
+            {{ b().fotoBiciId ? 'Tomar otra foto de la bici' : 'Tomar foto de la bici' }}
+          </qt-camara>
+        </div>
+      }
+    }
+
+    <!-- ───────── Paso 3: ¿Qué le pasa? ───────── -->
+    @case (3) {
+      <div class="card">
+        <label class="label" for="reportado">En las palabras del cliente <span class="req">*</span></label>
+        <textarea
+          id="reportado"
+          class="input"
+          [ngModel]="b().reportado"
+          (ngModelChange)="set('reportado', $event)"
+          placeholder="“Suena atrás”, “no me entra el cambio”, “los frenos no agarran”…"
+        ></textarea>
+        <div class="help">Este texto queda tal cual. Nadie lo cambia después.</div>
+      </div>
+
+      <div class="card">
+        <div class="row-between">
+          <span class="label sin-margen-abajo">Fotos de cómo llegó <span class="req">*</span></span>
+          <span class="cuenta-fotos" [style.color]="textoFotos().c">{{ textoFotos().t }}</span>
+        </div>
+        <div class="grid-3 fotos">
+          @for (f of b().fotos; track f) {
+            <div class="foto">
+              <qt-foto [fotoId]="f" alt="Foto de llegada" />
+              <button type="button" class="quitar" aria-label="Quitar foto" (click)="quitarFoto(f)">✕</button>
+            </div>
+          }
+          <qt-camara clase="camara" (foto)="agregarFoto($event)">
+            <svg width="26" height="26" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8"><rect x="3" y="6" width="18" height="14" rx="2"></rect><circle cx="12" cy="13" r="3.5"></circle><path d="M8 6l1.5-2h5L16 6"></path></svg>
+            <span>Foto</span>
+          </qt-camara>
+        </div>
+      </div>
+
+      <div class="card">
+        <span class="label">Qué trae puesto</span>
+        <div class="pills-wrap">
+          @for (a of accesoriosLista; track a) {
+            <button type="button" class="pill pill-lg" [class.on]="b().accesorios.includes(a)" (click)="alternarAccesorio(a)">{{ a }}</button>
+          }
+        </div>
+        <input class="input otro" [ngModel]="b().otroAccesorio" (ngModelChange)="set('otroAccesorio', $event)" placeholder="Otro accesorio que no esté en la lista" autocomplete="off" />
+      </div>
+
+      <div class="card">
+        <label class="label" for="golpes">Cómo llega la bici</label>
+        <textarea id="golpes" class="input bajo" [ngModel]="b().golpes" (ngModelChange)="set('golpes', $event)" placeholder="Golpes, rayones, algo doblado…"></textarea>
+      </div>
+    }
+
+    <!-- ───────── Paso 4: ¿Para cuándo y quién? ───────── -->
+    @case (4) {
+      <div class="card grid-2">
+        <div>
+          <label class="label" for="fecha">Día prometido</label>
+          <input id="fecha" class="input" type="date" [ngModel]="b().fecha" (ngModelChange)="set('fecha', $event)" />
+        </div>
+        <div>
+          <label class="label" for="hora">Hora</label>
+          <input id="hora" class="input" type="time" [ngModel]="b().hora" (ngModelChange)="set('hora', $event)" />
+        </div>
+      </div>
+
+      <div class="card">
+        <span class="label">Prioridad</span>
+        <div class="row">
+          <button type="button" class="seg" [class.on]="b().prioridad === 'Normal'" (click)="set('prioridad', 'Normal')">Normal</button>
+          <button type="button" class="seg" [class.on]="b().prioridad === 'Urgente'" (click)="set('prioridad', 'Urgente')">Urgente</button>
+        </div>
+      </div>
+
+      <div class="card">
+        <span class="label">Mecánico</span>
+        <div class="stack-8">
+          <button type="button" class="opcion" [class.on]="!b().mecanicoId" (click)="set('mecanicoId', null)">Sin asignar</button>
+          @for (m of mecanicos(); track m.id) {
+            <button type="button" class="opcion" [class.on]="b().mecanicoId === m.id" (click)="set('mecanicoId', m.id)">
+              {{ m.nombre }}{{ m.rol === 'admin' ? ' (administrador)' : '' }}
+            </button>
+          }
+        </div>
+      </div>
+
+      <div class="card">
+        <label class="label" for="adelanto">¿Deja adelanto?</label>
+        <qt-campo-plata campoId="adelanto" [valor]="b().adelanto" (valorChange)="set('adelanto', $event)" />
+        @if (b().adelanto > 0) {
+          <span class="label como-paga">Cómo lo paga</span>
+          <div class="pills-wrap">
+            @for (m of medios; track m) {
+              <button type="button" class="pill" [class.on]="b().medioAdelanto === m" (click)="set('medioAdelanto', m)">{{ m }}</button>
+            }
+          </div>
+        }
+      </div>
+    }
+  }
+</div>
+
+<div class="action-bar">
+  @if (falta()) {
+    <div class="action-bar-msg">{{ falta() }}</div>
+  }
+  <div class="row botones">
+    <button type="button" class="btn btn-outline btn-lg atras" (click)="atras()">Atrás</button>
+    <button type="button" class="btn btn-primary btn-lg" [class.is-off]="!!falta() || creando()" (click)="siguiente()">
+      {{ paso() === 4 ? (creando() ? 'Creando…' : 'Crear la orden') : 'Continuar' }}
+    </button>
+  </div>
+</div>

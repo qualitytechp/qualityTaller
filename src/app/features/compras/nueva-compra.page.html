@@ -1,0 +1,106 @@
+<qt-pasos [paso]="paso()" [total]="3" [titulo]="titulos[paso() - 1]" [ayuda]="ayudas[paso() - 1]" />
+
+<div class="cuerpo">
+  @switch (paso()) {
+    @case (1) {
+      <div class="stack">
+        @for (p of datos.valor().proveedores; track p.id) {
+          <button type="button" class="choice" [class.on]="proveedorId() === p.id" (click)="proveedorId.set(p.id)">
+            <div class="grow">
+              <div class="nombre">{{ p.nombre }}</div>
+              <div class="meta">{{ p.debe > 0 ? 'Le debes ' + plata(p.debe) : 'Al día' }}</div>
+            </div>
+          </button>
+        } @empty {
+          <div class="muted vacio">Primero agrega un proveedor en Compras.</div>
+        }
+      </div>
+      <div class="card factura">
+        <label class="label" for="factura">Número de factura</label>
+        <input id="factura" class="input" [ngModel]="factura()" (ngModelChange)="factura.set($event)" placeholder="Opcional" autocomplete="off" />
+      </div>
+    }
+    @case (2) {
+      <div class="stack">
+        @for (l of lineas(); track l.repuestoId) {
+          <div class="card-sm linea">
+            <div class="row-between">
+              <div class="nombre">{{ l.nombre }}</div>
+              <div class="display sub">{{ plata(l.cantidad * l.costo) }}</div>
+            </div>
+            <div class="row controles">
+              <button type="button" class="qty-btn" [attr.aria-label]="'Uno menos de ' + l.nombre" (click)="cambiarLinea(l.repuestoId, { cantidad: l.cantidad - 1 })">−</button>
+              <span class="n">{{ l.cantidad }}</span>
+              <button type="button" class="qty-btn" [attr.aria-label]="'Uno más de ' + l.nombre" (click)="cambiarLinea(l.repuestoId, { cantidad: l.cantidad + 1 })">+</button>
+              <div class="grow">
+                <qt-campo-plata [campoId]="'c-' + l.repuestoId" [valor]="l.costo" (valorChange)="cambiarLinea(l.repuestoId, { costo: $event })" />
+              </div>
+            </div>
+            <div class="meta">Costo de cada uno</div>
+          </div>
+        }
+        <div class="row agregar">
+          <button type="button" class="btn btn-add" (click)="busqueda.set(''); hoja.set('repuestos')">+ Del inventario</button>
+          <button type="button" class="btn btn-dashed" (click)="hoja.set('nuevo')">+ Repuesto nuevo</button>
+        </div>
+        <div class="total-caja">
+          <span class="eyebrow">Total de la compra</span>
+          <span class="display">{{ plata(total()) }}</span>
+        </div>
+      </div>
+    }
+    @case (3) {
+      <div class="total-caja">
+        <span class="eyebrow">Total de la compra</span>
+        <span class="display">{{ plata(total()) }}</span>
+      </div>
+      <div class="card">
+        <label class="label" for="pagado">¿Cuánto le pagas ahora?</label>
+        <qt-campo-plata campoId="pagado" [valor]="pagado()" (valorChange)="escribirPago($event)" />
+        @if (queda() > 0) {
+          <div class="queda">Le quedas debiendo {{ plata(queda()) }} a {{ proveedor()?.nombre }}.</div>
+        }
+        @if (pagado() > 0) {
+          <span class="label de-donde">De dónde sale</span>
+          <div class="row">
+            @for (f of fuentes; track f.k) {
+              <button type="button" class="seg" [class.on]="fuente() === f.k" (click)="fuente.set(f.k)">{{ f.k === 'Digital' ? 'Billeteras' : f.k }}</button>
+            }
+          </div>
+        }
+      </div>
+    }
+  }
+</div>
+
+<div class="action-bar">
+  @if (falta()) {
+    <div class="action-bar-msg">{{ falta() }}</div>
+  }
+  <div class="row botones">
+    <button type="button" class="btn btn-outline btn-lg atras" (click)="atras()">Atrás</button>
+    <button type="button" class="btn btn-primary btn-lg" [class.is-off]="!!falta() || guardando()" (click)="siguiente()">
+      {{ paso() === 3 ? 'Guardar la compra' : 'Continuar' }}
+    </button>
+  </div>
+</div>
+
+@if (hoja() === 'repuestos') {
+  <qt-hoja titulo="¿Qué llegó?" [buscador]="true" placeholder="Nombre, referencia o marca" [(busqueda)]="busqueda" (cerrar)="hoja.set(null)">
+    @for (r of repuestosVistos(); track r.id) {
+      <button qt-opcion [nombre]="r.nombre" [meta]="'Hay ' + r.cantidad + ' · costó ' + plata(r.costo)" (click)="agregar(r)"></button>
+    } @empty {
+      <div class="muted vacio">Nada con ese nombre. Créalo como repuesto nuevo.</div>
+    }
+  </qt-hoja>
+}
+
+@if (hoja() === 'nuevo') {
+  <qt-hoja titulo="Repuesto nuevo" (cerrar)="hoja.set(null)">
+    <label class="label" for="n-nombre">Nombre <span class="req">*</span></label>
+    <input id="n-nombre" class="input" [ngModel]="repNuevo().nombre" (ngModelChange)="repNuevo.set({ nombre: $event, precio: repNuevo().precio })" autocomplete="off" />
+    <label class="label" for="n-precio">Se vende en <span class="req">*</span></label>
+    <qt-campo-plata campoId="n-precio" [valor]="repNuevo().precio" (valorChange)="repNuevo.set({ nombre: repNuevo().nombre, precio: $event })" />
+    <button type="button" class="btn btn-dark btn-lg" (click)="crearRepuesto()">Agregar a la compra</button>
+  </qt-hoja>
+}

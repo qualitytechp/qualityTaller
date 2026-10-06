@@ -1,0 +1,93 @@
+@if (datos.error(); as e) {
+  <div class="page"><qt-error [texto]="e" /></div>
+} @else if (datos.cargando()) {
+  <qt-cargando />
+} @else {
+  <div class="page">
+    @if (cajaVacia()) {
+      <div class="card inicial">
+        <div class="t-strong">¿Con cuánta plata arrancas?</div>
+        <div class="muted">Anota lo que hay hoy en el cajón, en el banco y en las billeteras. Desde ahí la app lleva las cuentas.</div>
+        <button type="button" class="btn btn-dark" (click)="hoja.set('inicial')">Anotar saldos iniciales</button>
+      </div>
+    }
+
+    <div class="stack">
+      @for (f of fuentes; track f.k) {
+        <div class="card saldo">
+          <div>
+            <div class="eyebrow">{{ f.label }}</div>
+            <div class="meta">{{ f.meta }}</div>
+          </div>
+          <div class="display monto" [class.negativo]="saldos()[f.k] < 0">{{ plata(saldos()[f.k]) }}</div>
+        </div>
+      }
+    </div>
+
+    <div class="hoy">
+      <div>
+        <div class="eyebrow">Hoy entró {{ plata(entro()) }}</div>
+        <div class="eyebrow segunda">Hoy salió {{ plata(salio()) }}</div>
+      </div>
+      <div class="derecha">
+        <div class="eyebrow">Neto</div>
+        <div class="display neto">{{ plata(entro() - salio()) }}</div>
+      </div>
+    </div>
+
+    <div class="section-title">Movimientos de hoy</div>
+    <div class="stack-8">
+      @for (m of deHoy(); track m.id) {
+        <div class="card-sm mov">
+          <div class="signo" [class.entra]="m.tipo === 'entra'">{{ m.tipo === 'entra' ? '+' : '−' }}</div>
+          <div class="grow">
+            <div class="concepto">{{ m.concepto }}</div>
+            <div class="meta">{{ meta(m) }}</div>
+          </div>
+          <div class="display mov-monto" [class.entra]="m.tipo === 'entra'">{{ plata(m.monto) }}</div>
+        </div>
+      } @empty {
+        <qt-vacio titulo="Sin movimientos hoy" texto="Los cobros, las ventas y los gastos del día aparecen aquí." />
+      }
+    </div>
+    <button type="button" class="btn btn-dashed gasto" (click)="abrirGasto()">Anotar un gasto</button>
+    <div class="cierre muted">{{ ultimoCierre() }}</div>
+  </div>
+
+  <div class="action-bar">
+    <a class="btn btn-primary btn-lg" routerLink="/caja/cierre">Hacer el cierre de caja</a>
+  </div>
+
+  @if (hoja() === 'gasto') {
+    <qt-hoja titulo="Anotar un gasto" (cerrar)="hoja.set(null)">
+      <div class="pills-wrap">
+        @for (g of gastosRapidos; track g) {
+          <button type="button" class="pill" [class.on]="gasto().concepto === g" (click)="cambiarGasto({ concepto: g })">{{ g }}</button>
+        }
+      </div>
+      <label class="label" for="g-concepto">En qué se gastó <span class="req">*</span></label>
+      <input id="g-concepto" class="input" [ngModel]="gasto().concepto" (ngModelChange)="cambiarGasto({ concepto: $event })" autocomplete="off" />
+      <label class="label" for="g-monto">Cuánto <span class="req">*</span></label>
+      <qt-campo-plata campoId="g-monto" [valor]="gasto().monto" (valorChange)="cambiarGasto({ monto: $event })" />
+      <span class="label">De dónde sale</span>
+      <div class="row">
+        @for (f of fuentes; track f.k) {
+          <button type="button" class="seg" [class.on]="gasto().fuente === f.k" (click)="cambiarGasto({ fuente: f.k })">
+            {{ f.k === 'Digital' ? 'Billeteras' : f.k }}
+          </button>
+        }
+      </div>
+      <button type="button" class="btn btn-primary btn-lg" (click)="guardarGasto()">Anotar el gasto</button>
+    </qt-hoja>
+  }
+
+  @if (hoja() === 'inicial') {
+    <qt-hoja titulo="Saldos iniciales" (cerrar)="hoja.set(null)">
+      @for (f of fuentes; track f.k) {
+        <label class="label" [for]="'i-' + f.k">{{ f.label }}</label>
+        <qt-campo-plata [campoId]="'i-' + f.k" [valor]="iniciales()[f.k]" (valorChange)="cambiarInicial(f.k, $event)" />
+      }
+      <button type="button" class="btn btn-primary btn-lg" (click)="guardarIniciales()">Guardar</button>
+    </qt-hoja>
+  }
+}

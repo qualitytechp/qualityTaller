@@ -1,0 +1,125 @@
+.buscar {
+  position: sticky;
+  top: var(--header-h);
+  z-index: 20;
+  background: var(--gray-50);
+  padding: 14px 16px 12px;
+}
+.buscar .input {
+  min-height: 56px;
+}
+.cuerpo {
+  padding: 0 16px 16px;
+}
+.stack-8 {
+  display: flex;
+  flex-direction: column;
+  gap: 8px;
+}
+.articulo {
+  width: 100%;
+  text-align: left;
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  background: var(--white);
+  border: 1px solid var(--border-default);
+  border-radius: 14px;
+  padding: 14px;
+  min-height: 68px;
+  font: inherit;
+}
+.nombre {
+  font-size: 15.5px;
+  font-weight: 600;
+  line-height: 1.3;
+}
+.nombre.chico {
+  font-size: 15px;
+}
+.meta {
+  font-size: 12.5px;
+  color: var(--gray-500);
+  margin-top: 3px;
+}
+.meta.rojo {
+  color: var(--red-600);
+}
+.precio {
+  font-size: 19px;
+  white-space: nowrap;
+}
+.mas {
+  width: 38px;
+  height: 38px;
+  flex: 0 0 auto;
+  border-radius: 11px;
+  background: var(--red-600);
+  color: var(--white);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-size: 24px;
+  font-weight: 300;
+}
+.suelto {
+  margin-top: 14px;
+  width: auto;
+  display: inline-flex;
+  padding: 0 20px;
+}
+.link-suelto {
+  width: 100%;
+  margin-top: 10px;
+  min-height: 44px;
+  background: transparent;
+  border: 0;
+  color: var(--red-700);
+  font-size: 14px;
+  font-weight: 600;
+}
+.linea {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  padding: 12px 14px;
+}
+.n {
+  min-width: 24px;
+  text-align: center;
+  font-size: 17px;
+  font-weight: 700;
+}
+.sub {
+  font-size: 17px;
+  min-width: 74px;
+  text-align: right;
+}
+.como-paga {
+  margin-top: 12px;
+}
+.medios {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 8px;
+}
+.medio {
+  min-height: 56px;
+  border-radius: 12px;
+  font-size: 15px;
+  font-weight: 600;
+  background: var(--white);
+  color: var(--gray-700);
+  border: 2px solid var(--border-default);
+}
+.medio.on {
+  background: var(--black);
+  color: var(--white);
+  border-color: var(--black);
+}
+.resumen {
+  padding: 0 2px 2px;
+}
+.total {
+  font-size: 34px;
+}

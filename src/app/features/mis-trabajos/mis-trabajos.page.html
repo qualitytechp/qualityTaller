@@ -1,0 +1,91 @@
+@if (datos.error(); as e) {
+  <div class="page"><qt-error [texto]="e" /></div>
+} @else if (datos.cargando()) {
+  <qt-cargando />
+} @else {
+  <div class="page">
+    <div class="display titulo">{{ esMio() ? 'Mis trabajos de hoy' : 'Sus trabajos de hoy' }}</div>
+    <div class="muted resumen">{{ resumen() }}</div>
+
+    @if (sesion.esAdmin() && datos.valor().personas.length > 1) {
+      <div class="pills">
+        @for (p of datos.valor().personas; track p.id) {
+          <button type="button" class="pill" [class.on]="deEfectivo() === p.id" (click)="de.set(p.id)">{{ p.nombre }}</button>
+        }
+      </div>
+    }
+
+    <div class="stack lista">
+      @for (t of trabajos(); track t.orden.numero) {
+        <div class="card trabajo" [class.urgente]="t.orden.prioridad === 'Urgente'">
+          <a class="cabeza" [routerLink]="['/orden', t.orden.numero]">
+            <div class="row-between">
+              <span class="display numero">{{ t.orden.numero }}</span>
+              <span class="prioridad">{{ t.orden.prioridad }}</span>
+            </div>
+            <div class="bici">{{ t.bici }}</div>
+            <div class="que">{{ t.trabajo }}</div>
+            <div class="row-between fila">
+              <span class="prometida" [class.tarde]="t.tarde">{{ t.prometida }}</span>
+              <qt-estado [estado]="t.orden.estado" />
+            </div>
+          </a>
+
+          <div class="tareas">
+            @for (k of t.tareas; track $index) {
+              <button type="button" class="tarea" [class.hecha]="k.hecha" [attr.aria-pressed]="k.hecha" (click)="marcar(t, $index)">
+                <span class="check">
+                  @if (k.hecha) {
+                    <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="3.2" stroke-linecap="round"><path d="M5 13l4 4L19 7"></path></svg>
+                  }
+                </span>
+                <span>{{ k.texto }}</span>
+              </button>
+            }
+          </div>
+
+          <div class="row dos">
+            @if (t.orden.estado !== 'repuesto') {
+              <button type="button" class="btn btn-outline" (click)="pedir(t)">Pedir repuesto</button>
+            }
+            <qt-camara clase="btn btn-outline" (foto)="foto(t, $event)">Subir foto</qt-camara>
+          </div>
+          @let p = principal(t);
+          <button type="button" class="btn btn-primary terminar" [class.is-off]="!p.activo" (click)="hacer(t)">{{ p.label }}</button>
+        </div>
+      } @empty {
+        <qt-vacio titulo="No tienes trabajos hoy" texto="Cuando el mostrador te asigne una bici, aparece aquí." />
+      }
+    </div>
+
+    @if (sinAsignar().length) {
+      <div class="section-title">Sin asignar</div>
+      <div class="stack">
+        @for (t of sinAsignar(); track t.orden.numero) {
+          <div class="card-sm libre">
+            <a class="grow" [routerLink]="['/orden', t.orden.numero]">
+              <div class="row-between">
+                <span class="display numero">{{ t.orden.numero }}</span>
+                <span class="prioridad" [class.rojo]="t.orden.prioridad === 'Urgente'">{{ t.orden.prioridad }}</span>
+              </div>
+              <div class="bici">{{ t.bici }}</div>
+              <div class="que">{{ t.trabajo }}</div>
+            </a>
+            @if (esMio()) {
+              <button type="button" class="btn btn-dark tomar" (click)="tomar(t)">Tomarla</button>
+            }
+          </div>
+        }
+      </div>
+    }
+  </div>
+
+  @if (pidiendo(); as o) {
+    <qt-hoja [titulo]="'Pedir repuesto · ' + o.numero" (cerrar)="pidiendo.set(null)">
+      <div class="muted">La orden queda "Esperando repuesto" y el mostrador lo ve en Inicio y en Órdenes.</div>
+      <label class="label" for="falta">¿Qué hace falta? <span class="req">*</span></label>
+      <textarea id="falta" class="input" [ngModel]="queFalta()" (ngModelChange)="queFalta.set($event)" placeholder='Rin 29" doble pared, pastillas B01S…'></textarea>
+      <button type="button" class="btn btn-primary btn-lg" (click)="enviarPedido()">Avisar al mostrador</button>
+    </qt-hoja>
+  }
+}

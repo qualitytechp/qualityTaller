@@ -1,0 +1,99 @@
+@if (datos.cargando()) {
+  <qt-cargando />
+} @else if (datos.valor(); as d) {
+  <div class="franja">
+    <div>
+      <div class="eyebrow">{{ seCotiza() ? 'Total de la cotización' : 'Total del trabajo' }}</div>
+      <div class="conteo">{{ conteo() }}</div>
+    </div>
+    <div class="display grande">{{ plata(total()) }}</div>
+  </div>
+
+  <div class="page stack">
+    @for (i of items(); track i.id) {
+      <div class="card-sm row item">
+        <div class="grow">
+          <div class="nombre">{{ i.nombre }}</div>
+          <div class="meta">{{ metaItem(i) }}</div>
+        </div>
+        <div class="cantidad">
+          <button type="button" class="qty-btn" [attr.aria-label]="'Quitar uno de ' + i.nombre" (click)="cambiar(i.id, -1)">−</button>
+          <span class="n">{{ i.cantidad }}</span>
+          <button type="button" class="qty-btn" [attr.aria-label]="'Agregar uno de ' + i.nombre" (click)="cambiar(i.id, 1)">+</button>
+        </div>
+        <div class="display sub">{{ plata(i.precio * i.cantidad) }}</div>
+      </div>
+    } @empty {
+      <qt-vacio titulo="Cotización vacía" texto="Agrega la mano de obra y los repuestos que necesita la bici." />
+    }
+
+    <div class="row agregar">
+      <button type="button" class="btn btn-add" (click)="abrirHoja('servicios')">+ Servicio</button>
+      <button type="button" class="btn btn-dashed" (click)="abrirHoja('repuestos')">+ Repuesto</button>
+    </div>
+
+    <div class="card-sm descuento">
+      <label class="label" for="descuento">Descuento</label>
+      <qt-campo-plata campoId="descuento" [valor]="descuento()" (valorChange)="descuento.set($event)" />
+      @if (descuentoAlto()) {
+        <div class="action-bar-msg alto">El descuento es mayor que el trabajo.</div>
+      }
+    </div>
+
+    <div class="desglose">
+      <div class="linea"><span>Mano de obra</span><span>{{ plata(obra()) }}</span></div>
+      <div class="linea"><span>Repuestos</span><span>{{ plata(enRepuestos()) }}</span></div>
+      <div class="linea rojo"><span>Descuento</span><span>− {{ plata(descuento()) }}</span></div>
+      @if (d.orden.adelanto > 0) {
+        <div class="linea verde"><span>Adelanto ya recibido</span><span>{{ plata(d.orden.adelanto) }}</span></div>
+      }
+      <div class="raya"></div>
+      <div class="row-between">
+        <span class="eyebrow">{{ seCotiza() ? 'Total a cotizar' : 'Total del trabajo' }}</span>
+        <span class="display total">{{ plata(total()) }}</span>
+      </div>
+    </div>
+  </div>
+
+  <div class="action-bar">
+    @if (seCotiza()) {
+      <button type="button" class="btn btn-success btn-lg" [class.is-off]="!items().length || guardando()" (click)="enviar()">
+        Enviar por WhatsApp al cliente
+      </button>
+      <button type="button" class="btn btn-outline" (click)="soloGuardar()">Solo guardar en la orden</button>
+    } @else {
+      <button type="button" class="btn btn-primary btn-lg" [class.is-off]="guardando()" (click)="soloGuardar()">Guardar en la orden</button>
+      <button type="button" class="btn btn-outline" (click)="avisarCliente()">Guardar y avisarle al cliente por WhatsApp</button>
+    }
+  </div>
+
+  @if (hoja() === 'servicios') {
+    <qt-hoja titulo="Agregar servicio" [buscador]="true" placeholder="Purga, sincronización, rin…" [(busqueda)]="busqueda" (cerrar)="hoja.set(null)">
+      @for (s of serviciosVistos(); track s.id) {
+        <button qt-opcion [nombre]="s.nombre" [meta]="s.categoria" [precio]="plata(s.precio)" (click)="agregarServicio(s)"></button>
+      } @empty {
+        <div class="nada">Nada con ese nombre. Los servicios se crean en Más → Servicios.</div>
+      }
+    </qt-hoja>
+  }
+
+  @if (hoja() === 'repuestos') {
+    <qt-hoja titulo="Agregar repuesto" [buscador]="true" placeholder="Nombre, referencia o marca" [(busqueda)]="busqueda" (cerrar)="hoja.set(null)">
+      @for (r of repuestosVistos(); track r.id) {
+        <button
+          qt-opcion
+          [nombre]="r.nombre"
+          [meta]="metaRepuesto(r)"
+          [metaColor]="disponible(r.id) <= r.minimo ? 'var(--red-600)' : 'var(--gray-500)'"
+          [precio]="plata(r.precio)"
+          [class.agotado]="disponible(r.id) <= 0"
+          (click)="agregarRepuesto(r)"
+        ></button>
+      } @empty {
+        <div class="nada">Nada con ese nombre. Los repuestos se crean en Más → Repuestos.</div>
+      }
+    </qt-hoja>
+  }
+} @else {
+  <qt-vacio titulo="No se encontró la orden" texto="Búscala en Órdenes." />
+}

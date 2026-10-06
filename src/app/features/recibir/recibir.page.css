@@ -1,0 +1,182 @@
+.cuerpo {
+  padding: 0 16px 16px;
+  display: flex;
+  flex-direction: column;
+  gap: 12px;
+}
+.stack-14 {
+  display: flex;
+  flex-direction: column;
+  gap: 14px;
+}
+.stack-8 {
+  display: flex;
+  flex-direction: column;
+  gap: 8px;
+}
+.buscar {
+  min-height: 56px;
+}
+.lista:empty {
+  display: none;
+}
+.avatar.chico {
+  width: 40px;
+  height: 40px;
+}
+.nombre {
+  font-size: 16px;
+  font-weight: 600;
+}
+.meta {
+  font-size: 13px;
+  color: var(--gray-500);
+  margin-top: 2px;
+}
+.serie {
+  font-size: 12.5px;
+  color: var(--gray-400);
+  margin-top: 3px;
+}
+.nada {
+  font-size: 14px;
+  color: var(--gray-500);
+  text-align: center;
+  padding: 12px;
+}
+.de-quien {
+  font-size: 14px;
+  color: var(--gray-600);
+}
+.choice.bici {
+  padding: 12px;
+  border-radius: 16px;
+}
+.thumb.grande {
+  width: 64px;
+  height: 64px;
+  font-size: 24px;
+}
+.chico {
+  width: auto;
+  min-height: 44px;
+  font-size: 14px;
+  padding: 0 14px;
+  flex: 0 0 auto;
+}
+.retomado,
+.aviso-ambar {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  border-radius: 14px;
+  padding: 12px 14px;
+  font-size: 14px;
+  line-height: 1.35;
+}
+.retomado {
+  background: var(--white);
+  border: 1px solid var(--border-default);
+  color: var(--gray-700);
+}
+.aviso-ambar {
+  background: var(--warning-50);
+  border: 1px solid var(--warning-500);
+  color: var(--warning-700);
+}
+.pills.sin-margen {
+  margin: 0;
+  padding: 0 0 4px;
+}
+.mayus {
+  text-transform: uppercase;
+}
+.mayus::placeholder {
+  text-transform: none;
+}
+.foto-bici {
+  height: 160px;
+  border-radius: 14px;
+  background: var(--gray-100);
+}
+.sin-margen-abajo {
+  margin-bottom: 0;
+}
+.cuenta-fotos {
+  font-size: 13px;
+  font-weight: 600;
+}
+.fotos {
+  margin-top: 12px;
+}
+.foto {
+  position: relative;
+  aspect-ratio: 1;
+  border-radius: 12px;
+  overflow: hidden;
+  background: var(--gray-200);
+}
+.foto qt-foto {
+  width: 100%;
+  height: 100%;
+}
+.quitar {
+  position: absolute;
+  top: 4px;
+  right: 4px;
+  width: 30px;
+  height: 30px;
+  border-radius: 50%;
+  border: 0;
+  background: rgba(0, 0, 0, 0.6);
+  color: var(--white);
+  font-size: 13px;
+}
+:host ::ng-deep .camara {
+  aspect-ratio: 1;
+  border: 1px dashed var(--border-strong);
+  border-radius: 12px;
+  background: var(--gray-50);
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  gap: 4px;
+  color: var(--gray-700);
+  font-size: 11.5px;
+  font-weight: 700;
+}
+.otro {
+  margin-top: 12px;
+  min-height: 52px;
+}
+textarea.bajo {
+  min-height: 84px;
+}
+.opcion {
+  width: 100%;
+  min-height: 54px;
+  text-align: left;
+  padding: 14px;
+  border-radius: 12px;
+  font-size: 15px;
+  font-weight: 600;
+  background: var(--white);
+  color: var(--gray-700);
+  border: 2px solid var(--border-strong);
+}
+.opcion.on {
+  background: var(--black);
+  color: var(--white);
+  border-color: var(--black);
+}
+.como-paga {
+  margin-top: 14px;
+}
+.botones {
+  gap: 10px;
+}
+.atras {
+  flex: 0 0 96px;
+  width: 96px;
+}

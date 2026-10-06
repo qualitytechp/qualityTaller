@@ -1,0 +1,130 @@
+@if (datos.cargando()) {
+  <qt-cargando />
+} @else if (datos.valor(); as d) {
+  <div class="page">
+    <div class="portada" [style.background]="tono()">
+      <qt-foto class="fondo" [fotoId]="d.bici.fotoId" [alt]="titulo()"><span class="letra">{{ inicial() }}</span></qt-foto>
+      <div class="texto">
+        <div class="display titulo">{{ titulo() }}</div>
+        <div class="meta">{{ meta() }}</div>
+      </div>
+      <qt-camara clase="cambiar-foto" (foto)="cambiarFoto($event)">
+        <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8"><rect x="3" y="6" width="18" height="14" rx="2"></rect><circle cx="12" cy="13" r="3.5"></circle><path d="M8 6l1.5-2h5L16 6"></path></svg>
+      </qt-camara>
+    </div>
+
+    <div class="card bloque">
+      <div class="eyebrow">Número de serie</div>
+      <div class="serie">{{ d.bici.serie }}</div>
+    </div>
+
+    <div class="card bloque componentes">
+      <div class="row-between">
+        <div class="eyebrow">Componentes</div>
+        <button type="button" class="editar" (click)="editar()">Editar</button>
+      </div>
+      <div class="fila"><span class="muted">Grupo</span><span class="valor">{{ componente(d.bici.grupo) }}</span></div>
+      <div class="fila"><span class="muted">Frenos</span><span class="valor">{{ componente(d.bici.frenos) }}</span></div>
+      <div class="fila"><span class="muted">Suspensión</span><span class="valor">{{ componente(d.bici.suspension) }}</span></div>
+      <div class="fila"><span class="muted">Rines</span><span class="valor">{{ componente(d.bici.rines) }}</span></div>
+    </div>
+
+    <div class="card bloque row-between">
+      <div>
+        <div class="eyebrow">Próximo mantenimiento</div>
+        <div class="proximo" [class.vencido]="leToca()">{{ proximo() }}{{ leToca() ? " · ya le toca" : "" }}</div>
+      </div>
+      <button type="button" class="btn btn-success recordar" (click)="recordar()">Recordar</button>
+    </div>
+
+    <div class="section-title">Historial de servicios</div>
+    <div class="stack">
+      @for (h of historial(); track h.orden.numero) {
+        <a class="card-sm card-tap servicio" [routerLink]="['/orden', h.orden.numero]">
+          <div class="row-between">
+            <span class="display numero">{{ h.orden.numero }}</span>
+            <span class="fecha">{{ cuando(h.orden.recibida, false) }}</span>
+          </div>
+          <div class="trabajo">{{ h.trabajo }}</div>
+          <div class="row-between abajo">
+            <qt-estado [estado]="h.orden.estado" />
+            <span class="display total">{{ h.total }}</span>
+          </div>
+        </a>
+      } @empty {
+        <div class="primera">Es la primera vez que esta bici entra al taller.</div>
+      }
+    </div>
+  </div>
+
+  <div class="action-bar">
+    @if (enTaller(); as o) {
+      <div class="en-taller">Esta bici ya está en el taller con la orden {{ o.numero }}.</div>
+      <button type="button" class="btn btn-dark btn-lg" (click)="recibir()">Ver la orden {{ o.numero }}</button>
+    } @else {
+      <button type="button" class="btn btn-primary btn-lg" (click)="recibir()">Recibirla otra vez</button>
+    }
+  </div>
+
+  @if (editando(); as b) {
+    <qt-hoja titulo="Hoja de vida" (cerrar)="editando.set(null)">
+      <div class="form">
+        <div class="grid-2">
+          <div>
+            <label class="label" for="b-marca">Marca <span class="req">*</span></label>
+            <input id="b-marca" class="input" [ngModel]="b.marca" (ngModelChange)="cambiar('marca', $event)" autocomplete="off" />
+          </div>
+          <div>
+            <label class="label" for="b-modelo">Modelo</label>
+            <input id="b-modelo" class="input" [ngModel]="b.modelo" (ngModelChange)="cambiar('modelo', $event)" autocomplete="off" />
+          </div>
+        </div>
+        <div>
+          <span class="label">Tipo</span>
+          <div class="pills-wrap">
+            @for (t of tipos; track t) {
+              <button type="button" class="pill" [class.on]="b.tipo === t" (click)="cambiar('tipo', t)">{{ t }}</button>
+            }
+          </div>
+        </div>
+        <div class="grid-2">
+          <div>
+            <label class="label" for="b-color">Color</label>
+            <input id="b-color" class="input" [ngModel]="b.color" (ngModelChange)="cambiar('color', $event)" autocomplete="off" />
+          </div>
+          <div>
+            <label class="label" for="b-talla">Talla</label>
+            <input id="b-talla" class="input" [ngModel]="b.talla" (ngModelChange)="cambiar('talla', $event)" autocomplete="off" />
+          </div>
+        </div>
+        <div>
+          <label class="label" for="b-serie">Número de serie <span class="req">*</span></label>
+          <input id="b-serie" class="input" [ngModel]="b.serie" (ngModelChange)="cambiar('serie', $event)" autocomplete="off" autocapitalize="characters" />
+        </div>
+        <div>
+          <label class="label" for="b-grupo">Grupo</label>
+          <input id="b-grupo" class="input" [ngModel]="b.grupo" (ngModelChange)="cambiar('grupo', $event)" placeholder="Shimano Deore 12v" autocomplete="off" />
+        </div>
+        <div>
+          <label class="label" for="b-frenos">Frenos</label>
+          <input id="b-frenos" class="input" [ngModel]="b.frenos" (ngModelChange)="cambiar('frenos', $event)" placeholder="Disco hidráulico" autocomplete="off" />
+        </div>
+        <div>
+          <label class="label" for="b-susp">Suspensión</label>
+          <input id="b-susp" class="input" [ngModel]="b.suspension" (ngModelChange)="cambiar('suspension', $event)" placeholder="RockShox Judy" autocomplete="off" />
+        </div>
+        <div>
+          <label class="label" for="b-rines">Rines</label>
+          <input id="b-rines" class="input" [ngModel]="b.rines" (ngModelChange)="cambiar('rines', $event)" placeholder='Doble pared 29"' autocomplete="off" />
+        </div>
+        <div>
+          <label class="label" for="b-prox">Próximo mantenimiento</label>
+          <input id="b-prox" class="input" type="date" [ngModel]="b.proxMantenimiento" (ngModelChange)="cambiar('proxMantenimiento', $event)" />
+        </div>
+        <button type="button" class="btn btn-primary btn-lg" (click)="guardar()">Guardar</button>
+      </div>
+    </qt-hoja>
+  }
+} @else {
+  <qt-vacio titulo="No se encontró la bici" texto="Búscala en Clientes." />
+}

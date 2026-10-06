@@ -1,0 +1,98 @@
+.inicial {
+  display: flex;
+  flex-direction: column;
+  gap: 10px;
+  margin-bottom: 12px;
+}
+.saldo {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 12px;
+}
+.meta {
+  font-size: 12.5px;
+  color: var(--gray-400);
+  margin-top: 2px;
+}
+.monto {
+  font-size: 28px;
+  white-space: nowrap;
+}
+.negativo {
+  color: var(--red-600);
+}
+.hoy {
+  background: var(--black);
+  color: var(--white);
+  border-radius: 16px;
+  padding: 18px;
+  margin-top: 12px;
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+}
+.hoy .eyebrow {
+  color: var(--zinc-400);
+}
+.segunda {
+  margin-top: 4px;
+}
+.derecha {
+  text-align: right;
+}
+.neto {
+  font-size: 30px;
+}
+.stack-8 {
+  display: flex;
+  flex-direction: column;
+  gap: 8px;
+}
+.mov {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+}
+.signo {
+  width: 34px;
+  height: 34px;
+  flex: 0 0 auto;
+  border-radius: 10px;
+  background: var(--gray-100);
+  color: var(--gray-700);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-size: 19px;
+  font-weight: 700;
+}
+.signo.entra {
+  background: var(--success-100);
+  color: var(--success-700);
+}
+.concepto {
+  font-size: 14.5px;
+  font-weight: 600;
+  line-height: 1.3;
+}
+.mov .meta {
+  color: var(--gray-500);
+  font-size: 12px;
+}
+.mov-monto {
+  font-size: 18px;
+  color: var(--gray-700);
+  white-space: nowrap;
+}
+.mov-monto.entra {
+  color: var(--success-700);
+}
+.gasto {
+  margin-top: 14px;
+}
+.cierre {
+  font-size: 13px;
+  text-align: center;
+  margin-top: 14px;
+}

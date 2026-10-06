@@ -1,0 +1,76 @@
+@if (datos.cargando()) {
+  <qt-cargando />
+} @else {
+  <div class="page">
+    <div class="card-dark arriba">
+      <div>
+        <div class="eyebrow">Volvieron por garantía este mes</div>
+        <div class="display grande">{{ retrabajosMes() }}</div>
+      </div>
+      <div class="tasa">{{ tasa() }}</div>
+    </div>
+
+    <div class="section-title">Por qué vuelven</div>
+    <div class="stack">
+      @for (f of retrabajos(); track f.orden.numero) {
+        <a class="card g retrabajo" [routerLink]="['/orden', f.orden.numero]">
+          <div class="row-between">
+            <span class="display numero">{{ f.orden.numero }}</span>
+            <span class="badge rojo">Retrabajo</span>
+          </div>
+          <div class="cliente">{{ f.cliente }}</div>
+          <div class="bici">{{ f.bici }}</div>
+          <div class="motivo">{{ f.orden.motivoGarantia }}</div>
+          <div class="pie">Garantía de la orden {{ f.orden.garantiaDe }}</div>
+        </a>
+      } @empty {
+        <div class="nada">Ninguna bici ha vuelto por garantía.</div>
+      }
+    </div>
+
+    <div class="section-title">Garantías vigentes</div>
+    <div class="stack">
+      @for (f of vigentes(); track f.orden.numero) {
+        <div class="card g vigente">
+          <a class="enlace" [routerLink]="['/orden', f.orden.numero]">
+            <div class="row-between">
+              <span class="display numero">{{ f.orden.numero }}</span>
+              <span class="badge verde">Vigente</span>
+            </div>
+            <div class="cliente">{{ f.cliente }}</div>
+            <div class="bici">{{ f.bici }}</div>
+            <div class="pie">Garantía hasta el {{ fecha(f.orden.garantiaHasta!) }}</div>
+          </a>
+          <button type="button" class="btn btn-dark abrir" (click)="abrir(f.orden)">Abrir orden de garantía (sin cobro)</button>
+        </div>
+      } @empty {
+        <div class="nada">No hay garantías vigentes.</div>
+      }
+    </div>
+
+    @if (vencidas().length) {
+      <div class="section-title">Vencieron hace poco</div>
+      <div class="stack">
+        @for (f of vencidas(); track f.orden.numero) {
+          <a class="card g vencida" [routerLink]="['/orden', f.orden.numero]">
+            <div class="row-between">
+              <span class="display numero">{{ f.orden.numero }}</span>
+              <span class="badge gris">Vencida</span>
+            </div>
+            <div class="cliente">{{ f.cliente }}</div>
+            <div class="pie">Venció el {{ fecha(f.orden.garantiaHasta!) }}</div>
+          </a>
+        }
+      </div>
+    }
+  </div>
+
+  @if (abriendo(); as o) {
+    <qt-hoja [titulo]="'Garantía de ' + o.numero" (cerrar)="abriendo.set(null)">
+      <div class="muted">Se abre una orden nueva ligada a {{ o.numero }}, urgente y sin cobro.</div>
+      <label class="label" for="g-motivo">¿Qué pasó con la bici? <span class="req">*</span></label>
+      <textarea id="g-motivo" class="input" [ngModel]="motivo()" (ngModelChange)="motivo.set($event)" placeholder="Volvió a sonar la transmisión…"></textarea>
+      <button type="button" class="btn btn-dark btn-lg" (click)="confirmar()">Abrir la orden de garantía</button>
+    </qt-hoja>
+  }
+}

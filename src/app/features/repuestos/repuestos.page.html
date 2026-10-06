@@ -1,0 +1,125 @@
+<div class="sticky-bar">
+  <input
+    class="input input-search"
+    type="search"
+    placeholder="Nombre, referencia o marca"
+    [ngModel]="busqueda()"
+    (ngModelChange)="busqueda.set($event)"
+    autocomplete="off"
+  />
+  <div class="pills">
+    @for (f of filtros; track f.k) {
+      <button type="button" class="pill" [class.on]="filtro() === f.k" (click)="elegirFiltro(f.k)">{{ f.label }}</button>
+    }
+  </div>
+</div>
+
+<div class="lista">
+  @if (datos.error(); as e) {
+    <qt-error [texto]="e" />
+  } @else if (datos.cargando()) {
+    <qt-cargando />
+  } @else {
+    <div class="row-between arriba">
+      <span class="conteo">{{ conteo() }}</span>
+      @if (puedeEditar()) {
+        <button type="button" class="nuevo" (click)="nuevo()">+ Repuesto nuevo</button>
+      }
+    </div>
+    @for (r of lista(); track r.id) {
+      <div class="card repuesto" [style.border-left-color]="barra(r)">
+        <button type="button" class="cabeza" [disabled]="!puedeEditar()" (click)="editar(r)">
+          <div class="grow">
+            <div class="nombre">{{ r.nombre }}</div>
+            <div class="ref">{{ r.ref }}{{ r.marca ? ' · ' + r.marca : '' }}</div>
+          </div>
+          <div class="existencias">
+            <div class="display cantidad" [style.color]="colorCantidad(r)">{{ r.cantidad }}</div>
+            <div class="minimo">mínimo {{ r.minimo }}</div>
+          </div>
+        </button>
+        @if (sesion.vePlata()) {
+          <div class="precios">
+            <span class="muted">Se vende en <strong>{{ plata(r.precio) }}</strong></span>
+            @if (sesion.veCostos()) {
+              <span class="muted">Costó {{ plata(r.costo) }} · deja {{ plata(r.precio - r.costo) }}</span>
+            }
+          </div>
+          @if (r.cantidad <= r.minimo) {
+            <button type="button" class="btn btn-primary pedir" (click)="pedir(r)">
+              Pedirle {{ proveedor(r) ? 'a ' + proveedor(r)!.nombre : 'al proveedor' }} por WhatsApp
+            </button>
+          }
+        } @else if (r.cantidad === 0) {
+          <div class="agotado">Agotado: avísale al mostrador.</div>
+        }
+      </div>
+    } @empty {
+      <qt-vacio
+        [titulo]="busqueda() || filtro() !== 'todos' ? 'Nada por aquí' : 'Todavía no hay repuestos'"
+        [texto]="busqueda() || filtro() !== 'todos' ? 'Cambia el filtro o la búsqueda.' : 'Agrega los repuestos que vendes y usas en el taller.'"
+      />
+    }
+  }
+</div>
+
+@if (sesion.vePlata()) {
+  <div class="action-bar">
+    <button type="button" class="btn btn-primary btn-lg" (click)="router.navigate(['/venta'])">Vender en vitrina</button>
+  </div>
+}
+
+@if (editando(); as r) {
+  <qt-hoja [titulo]="r.id ? 'Editar repuesto' : 'Repuesto nuevo'" (cerrar)="editando.set(null)">
+    <div class="form">
+      <div>
+        <label class="label" for="r-nombre">Nombre <span class="req">*</span></label>
+        <input id="r-nombre" class="input" [ngModel]="r.nombre" (ngModelChange)="cambiar('nombre', $event)" placeholder="Cadena 9v KMC" autocomplete="off" />
+      </div>
+      <div class="grid-2">
+        <div>
+          <label class="label" for="r-ref">Referencia</label>
+          <input id="r-ref" class="input" [ngModel]="r.ref" (ngModelChange)="cambiar('ref', $event)" placeholder="X9-KMC" autocomplete="off" />
+        </div>
+        <div>
+          <label class="label" for="r-marca">Marca</label>
+          <input id="r-marca" class="input" [ngModel]="r.marca" (ngModelChange)="cambiar('marca', $event)" placeholder="KMC" autocomplete="off" />
+        </div>
+      </div>
+      <div class="grid-2">
+        <div>
+          <label class="label" for="r-precio">Se vende en <span class="req">*</span></label>
+          <qt-campo-plata campoId="r-precio" [valor]="r.precio" (valorChange)="cambiar('precio', $event)" />
+        </div>
+        @if (sesion.veCostos()) {
+          <div>
+            <label class="label" for="r-costo">Costó</label>
+            <qt-campo-plata campoId="r-costo" [valor]="r.costo" (valorChange)="cambiar('costo', $event)" />
+          </div>
+        }
+      </div>
+      <div class="grid-2">
+        <div>
+          <label class="label" for="r-cant">Hay</label>
+          <input id="r-cant" class="input" inputmode="numeric" [ngModel]="r.cantidad" (ngModelChange)="cambiarNumero('cantidad', $event)" />
+        </div>
+        <div>
+          <label class="label" for="r-min">Mínimo</label>
+          <input id="r-min" class="input" inputmode="numeric" [ngModel]="r.minimo" (ngModelChange)="cambiarNumero('minimo', $event)" />
+        </div>
+      </div>
+      @if (datos.valor().proveedores.length) {
+        <div>
+          <span class="label">Proveedor</span>
+          <div class="pills-wrap">
+            <button type="button" class="pill" [class.on]="!r.proveedorId" (click)="cambiar('proveedorId', undefined)">Ninguno</button>
+            @for (p of datos.valor().proveedores; track p.id) {
+              <button type="button" class="pill" [class.on]="r.proveedorId === p.id" (click)="cambiar('proveedorId', p.id)">{{ p.nombre }}</button>
+            }
+          </div>
+        </div>
+      }
+      <button type="button" class="btn btn-primary btn-lg" (click)="guardar()">Guardar</button>
+    </div>
+  </qt-hoja>
+}

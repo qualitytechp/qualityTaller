@@ -1,0 +1,137 @@
+.ahora {
+  display: flex;
+  align-items: flex-end;
+  gap: 14px;
+}
+.ahora .eyebrow {
+  letter-spacing: 0.1em;
+}
+.gigante {
+  font-size: 72px;
+  line-height: 0.9;
+  margin-top: 6px;
+}
+.fecha {
+  flex: 1;
+  text-align: right;
+  font-size: 13px;
+  color: var(--zinc-400);
+  padding-bottom: 8px;
+}
+.chips {
+  display: flex;
+  gap: 10px;
+  overflow-x: auto;
+  margin: 0 -16px;
+  padding: 16px 16px 4px;
+  scrollbar-width: none;
+}
+.chips::-webkit-scrollbar {
+  display: none;
+}
+.chip {
+  flex: 0 0 auto;
+  min-width: 118px;
+  text-align: left;
+  background: var(--white);
+  border: 1px solid var(--border-default);
+  border-radius: 14px;
+  padding: 12px;
+  box-shadow: 0 1px 2px rgba(0, 0, 0, 0.04);
+  font: inherit;
+}
+.chip-arriba {
+  display: flex;
+  align-items: center;
+  gap: 6px;
+}
+.punto {
+  width: 8px;
+  height: 8px;
+  border-radius: 50%;
+}
+.chip-n {
+  font-size: 26px;
+  color: var(--gray-900);
+}
+.chip-label {
+  font-size: 12.5px;
+  color: var(--gray-600);
+  margin-top: 6px;
+  line-height: 1.25;
+}
+.alerta {
+  width: 100%;
+  text-align: left;
+  display: flex;
+  gap: 12px;
+  align-items: flex-start;
+  background: var(--white);
+  border: 1px solid var(--border-default);
+  border-left: 4px solid;
+  border-radius: 14px;
+  padding: 14px;
+  box-shadow: 0 1px 2px rgba(0, 0, 0, 0.04);
+  font: inherit;
+}
+.alerta-titulo {
+  font-size: 15px;
+  font-weight: 600;
+  line-height: 1.3;
+}
+.alerta-detalle {
+  font-size: 13px;
+  color: var(--gray-500);
+  margin-top: 3px;
+  line-height: 1.35;
+}
+.alerta-n {
+  font-size: 30px;
+}
+.todo-titulo {
+  font-size: 15px;
+  font-weight: 700;
+  color: var(--success-700);
+}
+.plata-hoy {
+  color: inherit;
+}
+.eyebrow.verde {
+  color: var(--success-700);
+}
+.eyebrow.rojo {
+  color: var(--red-700);
+}
+.monto {
+  font-size: 28px;
+  line-height: 1.1;
+  margin-top: 4px;
+}
+.vitrina {
+  margin-top: 10px;
+  min-height: 60px;
+  font-size: 16.5px;
+}
+.mas {
+  font-size: 22px;
+  font-weight: 300;
+  line-height: 1;
+}
+.deben {
+  margin-top: 10px;
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 12px;
+  color: inherit;
+}
+.deudores {
+  font-size: 12.5px;
+  color: var(--gray-500);
+  margin-top: 2px;
+}
+.deben-monto {
+  font-size: 28px;
+  color: var(--red-600);
+  white-space: nowrap;
+}

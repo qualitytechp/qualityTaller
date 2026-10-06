@@ -1,0 +1,65 @@
+.total {
+  font-size: 44px;
+  margin-top: 6px;
+}
+.titulo .section-title {
+  margin-bottom: 10px;
+}
+.nuevo {
+  background: transparent;
+  border: 0;
+  color: var(--red-700);
+  font-size: 14px;
+  font-weight: 700;
+  min-height: 40px;
+  margin-top: 12px;
+}
+.nombre {
+  font-size: 16px;
+  font-weight: 600;
+}
+.nombre.chico {
+  font-size: 15px;
+}
+.meta {
+  font-size: 12.5px;
+  color: var(--gray-500);
+  margin-top: 2px;
+}
+.debe {
+  font-size: 22px;
+  color: var(--red-600);
+  white-space: nowrap;
+}
+.debe.al-dia {
+  color: var(--success-700);
+}
+.dos {
+  gap: 8px;
+  margin-top: 12px;
+}
+.dos .btn {
+  flex: 1;
+  min-height: 48px;
+  font-size: 14px;
+}
+.items {
+  font-size: 13.5px;
+  color: var(--gray-700);
+  margin-top: 8px;
+  line-height: 1.4;
+}
+.abajo {
+  margin-top: 10px;
+}
+.badge.pagada {
+  background: var(--success-100);
+  color: var(--success-700);
+}
+.badge.pendiente {
+  background: var(--warning-100);
+  color: var(--warning-700);
+}
+.monto {
+  font-size: 20px;
+}

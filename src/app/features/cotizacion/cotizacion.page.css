@@ -1,0 +1,116 @@
+.franja {
+  position: sticky;
+  top: var(--header-h);
+  z-index: 20;
+  background: var(--zinc-900);
+  color: var(--white);
+  padding: 14px 16px;
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+}
+.franja .eyebrow {
+  color: var(--zinc-400);
+  font-size: 12px;
+}
+.conteo {
+  font-size: 12.5px;
+  color: var(--zinc-400);
+  margin-top: 2px;
+}
+.grande {
+  font-size: 32px;
+}
+.item {
+  gap: 10px;
+}
+.nombre {
+  font-size: 15px;
+  font-weight: 600;
+  line-height: 1.3;
+}
+.meta {
+  font-size: 12.5px;
+  color: var(--gray-500);
+  margin-top: 3px;
+}
+.cantidad {
+  display: flex;
+  align-items: center;
+  gap: 6px;
+}
+.cantidad .qty-btn {
+  width: 40px;
+  height: 40px;
+  border-radius: 10px;
+  font-size: 20px;
+}
+.n {
+  min-width: 22px;
+  text-align: center;
+  font-size: 16px;
+  font-weight: 700;
+}
+.sub {
+  font-size: 17px;
+  min-width: 76px;
+  text-align: right;
+}
+.agregar {
+  gap: 10px;
+  margin-top: 2px;
+}
+.agregar .btn {
+  flex: 1;
+}
+.descuento {
+  padding: 16px;
+  margin-top: 6px;
+}
+.alto {
+  margin-top: 8px;
+  text-align: left;
+}
+.desglose {
+  background: var(--black);
+  color: var(--white);
+  border-radius: 14px;
+  padding: 16px;
+  display: flex;
+  flex-direction: column;
+  gap: 8px;
+}
+.linea {
+  display: flex;
+  justify-content: space-between;
+  font-size: 14px;
+  color: var(--zinc-400);
+}
+.linea.rojo {
+  color: #ff8a72;
+}
+.linea.verde {
+  color: #7ee2a8;
+}
+.raya {
+  height: 1px;
+  background: var(--zinc-700);
+  margin: 4px 0;
+}
+.desglose .eyebrow {
+  color: var(--zinc-400);
+  font-size: 12px;
+}
+.total {
+  font-size: 30px;
+}
+.nada {
+  text-align: center;
+  padding: 30px 20px;
+  color: var(--gray-500);
+  font-size: 14px;
+  line-height: 1.4;
+}
+.agotado {
+  opacity: 0.5;
+}

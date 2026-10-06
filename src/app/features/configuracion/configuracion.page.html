@@ -1,0 +1,92 @@
+@if (datos.cargando() || !taller()) {
+  <qt-cargando />
+} @else {
+  @let t = taller()!;
+  <div class="page stack-12">
+    <div class="card">
+      <div class="eyebrow titulo">Datos del taller</div>
+      <label class="label" for="c-nombre">Nombre</label>
+      <input id="c-nombre" class="input" [ngModel]="t.nombre" (ngModelChange)="cambiar({ nombre: $event })" autocomplete="organization" />
+      <div class="logo-fila">
+        @if (t.logoId) {
+          <qt-foto class="logo" [fotoId]="t.logoId" alt="Logo del taller" />
+        }
+        <qt-camara clase="btn btn-dashed" [directa]="false" (foto)="logo($event)">{{ t.logoId ? 'Cambiar el logo' : 'Subir el logo' }}</qt-camara>
+      </div>
+    </div>
+
+    <div class="card">
+      <div class="eyebrow titulo">Garantía por defecto en mano de obra</div>
+      <div class="row">
+        @for (d of dias; track d) {
+          <button type="button" class="seg" [class.on]="t.garantiaDias === d" (click)="cambiar({ garantiaDias: d })">{{ d }} días</button>
+        }
+      </div>
+    </div>
+
+    <div class="card">
+      <label class="eyebrow titulo" for="c-recibo">Mensaje de recibo por WhatsApp</label>
+      <textarea id="c-recibo" class="input" [ngModel]="t.textoRecibo" (ngModelChange)="cambiar({ textoRecibo: $event })"></textarea>
+      <div class="help">Lo que va entre llaves se reemplaza solo: {{ variables }}.</div>
+    </div>
+
+    <div class="card">
+      <label class="eyebrow titulo" for="c-listo">Mensaje de bici lista</label>
+      <textarea id="c-listo" class="input bajo" [ngModel]="t.textoListo" (ngModelChange)="cambiar({ textoListo: $event })"></textarea>
+    </div>
+
+    <div class="card">
+      <div class="row-between">
+        <div class="eyebrow titulo sin-margen">Personas y qué ve cada una</div>
+        <button type="button" class="nuevo" (click)="nueva()">+ Persona</button>
+      </div>
+      <div class="personas">
+        @for (p of personas(); track p.id) {
+          <button type="button" class="persona" [class.inactiva]="!p.activo" (click)="editar(p)">
+            <div class="avatar chico">{{ inicial(p.nombre) }}</div>
+            <div class="grow">
+              <div class="nombre">
+                {{ p.nombre }} · {{ rolLabel[p.rol] }}{{ p.id === sesion.persona()?.id ? ' (tú)' : '' }}{{ p.activo ? '' : ' · inactiva' }}
+              </div>
+              <div class="ve">{{ rolVe[p.rol] }}</div>
+            </div>
+            <span class="flecha">›</span>
+          </button>
+        }
+      </div>
+    </div>
+  </div>
+
+  @if (cambiado()) {
+    <div class="action-bar">
+      <button type="button" class="btn btn-primary btn-lg" (click)="guardar()">Guardar los cambios</button>
+    </div>
+  }
+
+  @if (editando(); as p) {
+    <qt-hoja [titulo]="p.id ? 'Editar persona' : 'Persona nueva'" (cerrar)="editando.set(null)">
+      <label class="label" for="p-nombre">Nombre <span class="req">*</span></label>
+      <input id="p-nombre" class="input" [ngModel]="p.nombre" (ngModelChange)="cambiarPersona({ nombre: $event })" autocomplete="off" />
+      <span class="label">Qué hace</span>
+      <div class="row">
+        @for (r of roles; track r) {
+          <button type="button" class="seg" [class.on]="p.rol === r" (click)="cambiarPersona({ rol: r })">{{ rolLabel[r] }}</button>
+        }
+      </div>
+      <div class="muted">{{ rolVe[p.rol] }}</div>
+      @if (p.rol === 'mecanico') {
+        <label class="label" for="p-comision">Comisión sobre la mano de obra (%)</label>
+        <input id="p-comision" class="input" inputmode="numeric" [ngModel]="p.comision" (ngModelChange)="cambiarComision($event)" />
+      }
+      <label class="label" for="p-pin">{{ p.id ? 'PIN nuevo (déjalo vacío para no cambiarlo)' : 'PIN de 4 números' }}</label>
+      <input id="p-pin" class="input pin" type="password" inputmode="numeric" maxlength="4" [ngModel]="p.pin" (ngModelChange)="cambiarPersona({ pin: $event })" placeholder="••••" autocomplete="new-password" />
+      @if (p.id) {
+        <button type="button" class="choice activo" [class.on]="p.activo" (click)="cambiarPersona({ activo: !p.activo })">
+          <span class="check" [class.on]="p.activo">✓</span>
+          <div class="grow">{{ p.activo ? 'Puede entrar a la app' : 'No puede entrar (inactiva)' }}</div>
+        </button>
+      }
+      <button type="button" class="btn btn-primary btn-lg" (click)="guardarPersona()">Guardar</button>
+    </qt-hoja>
+  }
+}

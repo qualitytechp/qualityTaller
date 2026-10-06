@@ -1,0 +1,83 @@
+<div class="sticky-bar">
+  <input
+    class="input input-search"
+    type="search"
+    placeholder="Nombre, celular o cédula"
+    [ngModel]="busqueda()"
+    (ngModelChange)="busqueda.set($event)"
+    autocomplete="off"
+  />
+  <div class="espacio"></div>
+</div>
+
+<div class="lista">
+  @if (datos.error(); as e) {
+    <qt-error [texto]="e" />
+  } @else if (datos.cargando()) {
+    <qt-cargando />
+  } @else {
+    <div class="conteo">{{ conteo() }}</div>
+    @for (f of fichas(); track f.cliente.id) {
+      <div class="card-sm ficha">
+        <div class="row">
+          <button type="button" class="quien" (click)="editar(f.cliente)" [attr.aria-label]="'Editar datos de ' + f.cliente.nombre">
+            <div class="avatar">{{ inicial(f.cliente.nombre) }}</div>
+            <div class="grow">
+              <div class="nombre">{{ f.cliente.nombre }}</div>
+              <div class="meta">{{ meta(f.cliente) }}</div>
+            </div>
+          </button>
+          <button type="button" class="btn-icon wa" [attr.aria-label]="'WhatsApp a ' + f.cliente.nombre" (click)="escribir(f.cliente)">
+            <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"><path d="M21 15a2 2 0 0 1-2 2H7l-4 4V5a2 2 0 0 1 2-2h14a2 2 0 0 1 2 2z"></path></svg>
+          </button>
+        </div>
+        @if (f.bicis.length) {
+          <div class="bicis">
+            @for (b of f.bicis; track b.bici.id) {
+              <a class="bici" [routerLink]="['/bici', b.bici.id]">
+                <div class="bici-titulo ellipsis">{{ b.bici.marca }} {{ b.bici.modelo }}</div>
+                <div class="bici-meta">{{ b.bici.tipo }} · {{ b.ultimo }}</div>
+              </a>
+            }
+          </div>
+        }
+        <div class="pie">
+          <span class="muted">Ha gastado <strong>{{ plata(f.gastado) }}</strong></span>
+          <span class="debe" [class.en-rojo]="f.cliente.debe > 0">{{ debeTexto(f.cliente) }}</span>
+        </div>
+      </div>
+    } @empty {
+      @if (busqueda()) {
+        <qt-vacio titulo="Nadie con ese nombre" texto="Busca por celular o cédula. Los clientes nuevos se crean al recibir una bici." />
+      } @else {
+        <qt-vacio titulo="Todavía no hay clientes" texto="Se crean solos al recibir la primera bici con el botón rojo de abajo." />
+      }
+    }
+  }
+</div>
+
+@if (editando(); as c) {
+  <qt-hoja titulo="Datos del cliente" (cerrar)="editando.set(null)">
+    <div class="form">
+      <div>
+        <label class="label" for="c-nombre">Nombre <span class="req">*</span></label>
+        <input id="c-nombre" class="input" [ngModel]="c.nombre" (ngModelChange)="cambiar('nombre', $event)" autocomplete="off" />
+      </div>
+      <div>
+        <label class="label" for="c-cel">Celular <span class="req">*</span></label>
+        <input id="c-cel" class="input" type="tel" inputmode="tel" [ngModel]="c.celular" (ngModelChange)="cambiar('celular', $event)" autocomplete="off" />
+      </div>
+      <div class="grid-2">
+        <div>
+          <label class="label" for="c-cedula">Cédula</label>
+          <input id="c-cedula" class="input" inputmode="numeric" [ngModel]="c.cedula" (ngModelChange)="cambiar('cedula', $event)" placeholder="Opcional" autocomplete="off" />
+        </div>
+        <div>
+          <label class="label" for="c-correo">Correo</label>
+          <input id="c-correo" class="input" type="email" [ngModel]="c.correo" (ngModelChange)="cambiar('correo', $event)" placeholder="Opcional" autocomplete="off" />
+        </div>
+      </div>
+      <button type="button" class="btn btn-primary btn-lg" (click)="guardar()">Guardar</button>
+    </div>
+  </qt-hoja>
+}
